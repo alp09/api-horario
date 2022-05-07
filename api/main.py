@@ -13,6 +13,7 @@ app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 # Registro de routers
+app.include_router(router_login.router)
 app.include_router(router_profesor.router)
 
 
@@ -26,3 +27,8 @@ def startup():
 def shutdown():
 	# Cierra la base de datos
 	bbdd.cerrar_conexion()
+
+
+# Permite probar OAuth2 sin necesidad de tener HTTPS
+import os
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
