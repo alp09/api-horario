@@ -41,14 +41,6 @@ def insertar(profesores_nuevos: list[Profesor]):
 	return servicio_profesor.insertar(profesores_nuevos)
 
 
-@router.put("/", response_model=list[Profesor], status_code=status.HTTP_200_OK)
-def actualizar(profesores_editados: list[ProfesorUpdate]):
-	profesores_actualizados = servicio_profesor.actualizar(profesores_editados)
-	if not profesores_actualizados:
-		raise NoProfesoresEncontradosError
-	return profesores_actualizados
-
-
 @router.put("/{codigo_profesor}", response_model=Profesor, status_code=status.HTTP_200_OK)
 def actualizar_por_codigo(codigo_profesor: str, profesor_editado: Profesor):
 	profesor_actualizado = servicio_profesor.actualizar_uno(codigo_profesor, profesor_editado)
@@ -59,9 +51,9 @@ def actualizar_por_codigo(codigo_profesor: str, profesor_editado: Profesor):
 
 @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
 def borrar(codigos_profesores: list[str]):
-	profesores_no_eliminados = servicio_profesor.borrar(codigos_profesores)
-	if profesores_no_eliminados:
-		raise CodigoProfesorNoEncontradoError(profesores_no_eliminados)
+	profesores_eliminados = servicio_profesor.borrar(codigos_profesores)
+	if not profesores_eliminados:
+		raise CodigoProfesorNoEncontradoError(codigos_profesores)
 
 
 @router.delete("/{codigo_profesor}", status_code=status.HTTP_204_NO_CONTENT)

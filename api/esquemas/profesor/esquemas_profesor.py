@@ -6,7 +6,3 @@ class Profesor(BaseModel):
 	nombre_completo: str	= Field(max_length=255)
 	email: str | None		= Field(None, max_length=255)
 	es_admin: bool			= False
-
-
-class ProfesorUpdate(Profesor):
-	codigo_antiguo: str = Field(max_length=20)

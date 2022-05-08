@@ -78,31 +78,27 @@ def insertar(datos_profesores: list[dict]) -> list[Profesor]:
 		raise IntegridadError(excepcion.orig.pgerror)
 
 
-def actualizar(datos_profesores: list[dict]) -> list[Profesor]:
+def actualizar_por_codigo(codigo_profesor: str, datos_profesor: dict) -> Profesor:
 	"""
 	Actualiza los datos del profesor con código indicado por la key codigo_ con el resto de datos del diccionario
 
-	:param datos_profesores: una lista de diccionarios con los datos de los profesores actualizados
-	:returns: una lista con los datos de los profesores actualizados
+	:param codigo_profesor: el codigo del profesor que se va a actualizar
+	:param datos_profesor: un diccionario con los datos actualizados del profesor
+	:returns: los datos del profesor actualizado
 
 	Esta función no realiza una actualización por lotes porque no soporta devolver el resultado
 	https://github.com/sqlalchemy/sqlalchemy/discussions/7980
 	"""
 	sql = (
 		update(Profesor)
-		.where(Profesor.codigo == bindparam("codigo_antiguo"))
+		.where(Profesor.codigo == codigo_profesor)
+		.values(datos_profesor)
 		.returning(Profesor)
 	)
 
 	try:
-		profesores_actualizados = []
-		with get_transaccion() as transaccion:
-			for profesor in datos_profesores:
-				if (resultado := transaccion.execute(sql, profesor).one_or_none()) is not None:
-					profesores_actualizados.append(resultado)
-
-		# Devuelve la lista de profesores o None si esta vacía
-		return profesores_actualizados or None
+		with get_conexion() as conexion:
+			return conexion.execute(sql).one_or_none()
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
