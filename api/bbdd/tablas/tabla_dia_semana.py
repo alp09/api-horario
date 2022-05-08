@@ -1,14 +1,14 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from ..bbdd import Base
 
 
-class Aula(Base):
-	__tablename__ = "aula"
+class DiaSemana(Base):
+	__tablename__ = "dia_semana"
 
 	# Columnas
-	codigo 		= Column(String(20), primary_key=True)
+	id	 		= Column(Integer(), primary_key=True)
 	descripcion = Column(String(255))
 
 	# Relaciones
