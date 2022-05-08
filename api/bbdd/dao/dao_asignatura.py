@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert, update, delete, bindparam
+from sqlalchemy import select, insert, update, delete
 from sqlalchemy.exc import IntegrityError
 
 from api.bbdd import get_conexion, get_transaccion
@@ -72,9 +72,6 @@ def actualizar_por_codigo(codigo_asignatura: str, datos_asingaturas: dict) -> As
 	:param codigo_asignatura: el codigo de la asignatura que se va a actualizar
 	:param datos_asingaturas: un diccionario con los datos actualizados de la asignatura
 	:returns: los datos de la asignatura actualizada
-
-	Esta función no realiza una actualización por lotes porque no soporta devolver el resultado
-	https://github.com/sqlalchemy/sqlalchemy/discussions/7980
 	"""
 	sql = (
 		update(Asignatura)

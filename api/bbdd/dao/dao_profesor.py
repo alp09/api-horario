@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert, update, delete, bindparam
+from sqlalchemy import select, insert, update, delete
 from sqlalchemy.exc import IntegrityError
 
 from api.bbdd import get_conexion, get_transaccion
@@ -80,14 +80,11 @@ def insertar(datos_profesores: list[dict]) -> list[Profesor]:
 
 def actualizar_por_codigo(codigo_profesor: str, datos_profesor: dict) -> Profesor:
 	"""
-	Actualiza los datos del profesor con código indicado por la key codigo_ con el resto de datos del diccionario
+	Actualiza los datos del profesor con codigo_profesor con el resto de datos del diccionario datos_profesor
 
 	:param codigo_profesor: el codigo del profesor que se va a actualizar
 	:param datos_profesor: un diccionario con los datos actualizados del profesor
 	:returns: los datos del profesor actualizado
-
-	Esta función no realiza una actualización por lotes porque no soporta devolver el resultado
-	https://github.com/sqlalchemy/sqlalchemy/discussions/7980
 	"""
 	sql = (
 		update(Profesor)
@@ -106,7 +103,7 @@ def actualizar_por_codigo(codigo_profesor: str, datos_profesor: dict) -> Profeso
 
 def borrar(codigos_profesores: list[str]) -> list[str]:
 	"""
-	Borra todos los profesores cuyo código se encuentre en la lsita de codigos_profesores
+	Borra todos los profesores cuyo código se encuentre en la lista de codigos_profesores
 
 	:param codigos_profesores: la lista de código de los profesores a borrar
 	:return: una lista de todos los códigos que se han eliminado
