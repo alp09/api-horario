@@ -1,5 +1,5 @@
 from api.bbdd.dao import dao_profesor
-from api.esquemas.profesor import *
+from api.esquemas import Profesor
 
 
 def get_todos() -> list[Profesor]:

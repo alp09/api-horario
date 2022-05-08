@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 
-from api.esquemas.profesor import *
-from api.excepciones.genericas import *
+from api.esquemas import Profesor
+from api.excepciones.genericas import SinRegistros, CodigoNoEncontrado
 from api.excepciones.profesor import EmailProfesorNoEncontradoError
 from api.servicios import servicio_profesor
 

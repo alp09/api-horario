@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, ExpiredSignatureError
 
 from api.config import SECRET_KEY, ALGORITMO
-from api.esquemas.profesor import Profesor
+from api.esquemas import Profesor
 from api.excepciones.auth import UsuarioNoLogeado, PermisosInsuficientesError, SesionCaducadaError
 
 

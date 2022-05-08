@@ -2,7 +2,7 @@ from google_auth_oauthlib.flow import Flow		# Google ofrece una librería que fa
 from googleapiclient.discovery import build
 
 from api.config import BASE_URL, path_archivo_google
-from api.esquemas.profesor import Profesor
+from api.esquemas import Profesor
 from api.servicios import servicio_profesor
 
 
