@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Response
 
 from api.esquemas import Grupo
 from api.excepciones.genericas import SinRegistros, CodigoNoEncontrado
@@ -41,14 +41,14 @@ def actualizar_por_codigo(codigo_grupo: str, grupo_editado: Grupo):
 	return grupo_actualizado
 
 
-@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
 def borrar(codigos_grupos: list[str]):
 	grupos_eliminados = servicio_grupo.borrar(codigos_grupos)
 	if not grupos_eliminados:
 		raise CodigoNoEncontrado(codigos_grupos)
 
 
-@router.delete("/{codigo_grupo}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{codigo_grupo}", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
 def borrar_por_codigo(codigo_grupo: str):
 	grupo_eliminado = servicio_grupo.borrar_uno(codigo_grupo)
 	if not grupo_eliminado:

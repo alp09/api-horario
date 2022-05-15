@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Response
 
 from api.esquemas import Asignatura
 from api.excepciones.genericas import SinRegistros, CodigoNoEncontrado
@@ -41,14 +41,14 @@ def actualizar_por_codigo(codigo_asignatura: str, asignatura_editada: Asignatura
 	return asignatura_actualizada
 
 
-@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
 def borrar(codigos_asignaturas: list[str]):
 	asignatuas_eliminadas = servicio_asignatura.borrar(codigos_asignaturas)
 	if not asignatuas_eliminadas:
 		raise CodigoNoEncontrado(codigos_asignaturas)
 
 
-@router.delete("/{codigo_asignatura}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{codigo_asignatura}", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
 def borrar_por_codigo(codigo_asignatura: str):
 	asignatura_eliminada = servicio_asignatura.borrar_uno(codigo_asignatura)
 	if not asignatura_eliminada:
