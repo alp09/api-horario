@@ -1,7 +1,8 @@
-import configparser
+from configparser import ConfigParser
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.future import create_engine, Engine, Connection
 
+from api.config import path_archivo_settings
 
 # Base usada para crear los modelos de tablas
 Base = declarative_base()
@@ -19,10 +20,19 @@ def inicializar_conexion():
 
 		:return: devuelve el objeto Engine
 		"""
-		from api.config import DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE
+		# Crea el configparser
+		configparser = ConfigParser()
+		configparser.read(path_archivo_settings)
+
+		# Lee las variables necesarias
+		username = configparser.get("DATABASE", "username")
+		password = configparser.get("DATABASE", "password")
+		host 	 = configparser.get("DATABASE", "host")
+		port 	 = configparser.get("DATABASE", "port")
+		database = configparser.get("DATABASE", "database")
 
 		return create_engine(
-			url=f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}",
+			url=f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}",
 			pool_size=5,
 			max_overflow=10
 		)

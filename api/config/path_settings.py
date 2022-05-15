@@ -22,10 +22,3 @@ SECRET_KEY	= configparser.get("APP", "secret_key")
 
 # [JWT]
 ALGORITMO 	= configparser.get("JWT", "algoritmo")
-
-# [DATABASE]
-DB_USERNAME = configparser.get("DATABASE", "username")
-DB_PASSWORD = configparser.get("DATABASE", "password")
-DB_HOST 	= configparser.get("DATABASE", "host")
-DB_PORT 	= configparser.get("DATABASE", "port")
-DB_DATABASE = configparser.get("DATABASE", "database")
