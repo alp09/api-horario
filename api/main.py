@@ -13,6 +13,9 @@ app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 # Registro de routers
+app.include_router(router_asignatura.router)
+app.include_router(router_aula.router)
+app.include_router(router_grupo.router)
 app.include_router(router_login.router)
 app.include_router(router_profesor.router)
 
