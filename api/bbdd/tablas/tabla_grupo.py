@@ -12,4 +12,4 @@ class Grupo(Base):
 	descripcion = Column(String(255))
 
 	# Relaciones
-	horario 	= relationship("Horario")
+	horario 	= relationship("Horario", back_populates="grupo", lazy="noload")
