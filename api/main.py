@@ -1,3 +1,5 @@
+import os
+import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 
@@ -9,11 +11,15 @@ from api.routers import *
 # App FastAPI
 app = FastAPI()
 
+# Permite probar OAuth2 sin necesidad de tener HTTPS
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 # Añade los middleware
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
 # Registro de routers
 app.include_router(router_login.router)
+app.include_router(router_horario.router)
 app.include_router(router_profesor.router)
 
 
@@ -29,6 +35,5 @@ def shutdown():
 	bbdd.cerrar_conexion()
 
 
-# Permite probar OAuth2 sin necesidad de tener HTTPS
-import os
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+if __name__ == "__main__":
+	uvicorn.run(app, host="127.0.0.1", port=8000)
