@@ -1,8 +1,7 @@
-import configparser
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.future import create_engine, Engine, Connection
 from sqlalchemy.orm import Session, sessionmaker
-
 
 
 # Base usada para crear los modelos de tablas
@@ -30,6 +29,7 @@ def inicializar_conexion():
 			url=f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}",
 			pool_size=5,
 			max_overflow=10,
+			future=True,
 			echo=True
 		)
 
@@ -49,7 +49,7 @@ def get_conexion() -> Connection:
 		return engine.connect()
 
 
-def get_transaccion() -> None:
+def get_transaccion() -> Connection:
 	""" Devuelve una conexión con una transacción iniciada """
 	if engine is not None:
 		return engine.begin()
