@@ -20,6 +20,6 @@ def borrar(id_horarios: list[int]) -> list[int]:
 	return dao_horario.borrar(id_horarios)
 
 
-def borrar_uno(id_horario: int) -> bool:
+def borrar_por_codigo(id_horario: int) -> bool:
 	horario_borrado = dao_horario.borrar([id_horario])
 	return horario_borrado.__len__() == 1
