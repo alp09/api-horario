@@ -12,4 +12,4 @@ class DiaSemana(Base):
 	descripcion = Column(String(20))
 
 	# Relaciones
-	horario 	= relationship("Horario", back_populates="dia", lazy="noload")
+	horarios 	= relationship("Horario", back_populates="dia", lazy="noload")

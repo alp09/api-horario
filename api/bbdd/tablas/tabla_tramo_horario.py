@@ -14,5 +14,5 @@ class TramoHorario(Base):
 	hora_fin	= Column(Time)
 
 	# Relaciones
-	horario 	= relationship("Horario", back_populates="tramo", lazy="noload")
+	horarios 	= relationship("Horario", back_populates="tramo", lazy="noload")
 	reservas 	= relationship("Reserva", back_populates="tramo", lazy="noload")
