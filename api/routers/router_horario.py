@@ -1,6 +1,7 @@
+from datetime import date
 from fastapi import APIRouter, status
 
-from api.esquemas import Horario
+from api.esquemas import HorarioIn, HorarioOut
 from api.excepciones.genericas import CodigoNoEncontrado, SinRegistros
 from api.servicios import servicio_horario
 
@@ -12,21 +13,22 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[Horario], status_code=status.HTTP_200_OK)
+@router.get("/", response_model=list[HorarioOut], status_code=status.HTTP_200_OK)
 def get_todos():
-	if resultado := servicio_horario.get_todos():
-		return resultado
-	else:
+	horarios_encontrados = servicio_horario.get_todos()
+	if not horarios_encontrados:
 		raise SinRegistros
+	return horarios_encontrados
 
 
-@router.post("/", response_model=list[Horario], status_code=status.HTTP_201_CREATED)
-def insertar(horarios_nuevos: list[Horario]):
-	return servicio_horario.insertar(horarios_nuevos)
+@router.post("/", response_model=list[HorarioOut], status_code=status.HTTP_201_CREATED)
+def insertar(horarios_nuevos: list[HorarioIn]):
+	horario_creado = servicio_horario.insertar(horarios_nuevos)
+	return horario_creado
 
 
-@router.put("/{id_horario}", response_model=list[Horario], status_code=status.HTTP_200_OK)
-def actualizar_por_codigo(id_horario: int, horario_editado: Horario):
+@router.put("/{id_horario}", response_model=list[HorarioOut], status_code=status.HTTP_200_OK)
+def actualizar_por_codigo(id_horario: int, horario_editado: HorarioIn):
 	horario_actualizado = servicio_horario.actualizar_por_codigo(id_horario, horario_editado)
 	if not horario_actualizado:
 		raise CodigoNoEncontrado(id_horario)

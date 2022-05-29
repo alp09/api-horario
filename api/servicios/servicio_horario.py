@@ -1,23 +1,26 @@
 from api.bbdd.dao import dao_horario
-from api.esquemas import Horario
+from api.esquemas import HorarioIn, HorarioOut
 
 
-def get_todos() -> list[Horario]:
+def get_todos() -> list[HorarioOut]:
 	horarios_encontrados = dao_horario.seleccionar_todos()
 	return horarios_encontrados
 
 
-def insertar(horarios_nuevos: list[Horario]) -> list[Horario]:
+def insertar(horarios_nuevos: list[HorarioIn]) -> list[HorarioOut]:
 	horarios_procesados = [horario.dict(exclude_unset=True) for horario in horarios_nuevos]
-	return dao_horario.insertar(horarios_procesados)
+	horarios_insertados = dao_horario.insertar(horarios_procesados)
+	return horarios_insertados
 
 
-def actualizar_por_codigo(id_horario: int, datos_horario: Horario) -> Horario | None:
-	return dao_horario.actualizar_por_codigo(id_horario, datos_horario.dict())
+def actualizar_por_codigo(id_horario: int, datos_horario: HorarioIn) -> HorarioOut | None:
+	horario_actualizado = dao_horario.actualizar_por_codigo(id_horario, datos_horario.dict(exclude_unset=True))
+	return horario_actualizado
 
 
 def borrar(id_horarios: list[int]) -> list[int]:
-	return dao_horario.borrar(id_horarios)
+	horarios_borrados = dao_horario.borrar(id_horarios)
+	return horarios_borrados
 
 
 def borrar_por_codigo(id_horario: int) -> bool:
