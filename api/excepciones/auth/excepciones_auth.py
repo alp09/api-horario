@@ -6,7 +6,7 @@ class UsuarioNoRegistradoError(HTTPException):
 	status_code = status.HTTP_401_UNAUTHORIZED
 
 	def __init__(self, email):
-		self.detail = f"Tu e-mail {email} estás registrado en la organización"
+		self.detail = f"El email {email} no está registrado en la organización"
 
 
 class UsuarioNoLogeado(HTTPException):

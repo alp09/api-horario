@@ -70,4 +70,5 @@ def validar_usuario_logeado(email: str) -> Profesor | None:
 	:param email: el email del usuario que ha iniciado sesión
 	:return: el profesor si se encontró o None si no existe
 	"""
-	return servicio_profesor.get_por_email(email)
+	profesor_logeado = servicio_profesor.get_por_email(email)
+	return profesor_logeado

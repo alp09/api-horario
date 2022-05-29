@@ -63,11 +63,12 @@ def login_callback(request: Request) -> str:
 	email_usuario = datos_usuario["email"]
 
 	# Valida que el usuario está registrado en la base de datos
-	profesor 	  = servicio_login.validar_usuario_logeado(email_usuario)
-	dict_profesor = dict(**profesor)
+	profesor = servicio_login.validar_usuario_logeado(email_usuario)
 
 	# Si no lo está, devuelve una excepción Unauthorized.
-	if not profesor:
+	if profesor is None:
 		raise UsuarioNoRegistradoError(email=email_usuario)
 
+	# Si lo está genera el JWT token con los datos del usuario registrado
+	dict_profesor = dict(profesor)
 	return servicio_jwt.generar_jwt_token(dict_profesor)
