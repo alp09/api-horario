@@ -12,4 +12,6 @@ class Aula(Base):
 	descripcion = Column(String(255))
 
 	# Relaciones
-	horario 	= relationship("Horario", back_populates="aula", lazy="noload")
+	horarios 	= relationship("Horario", back_populates="aula", lazy="noload")
+	reservas	= relationship("Reserva", back_populates="aula", lazy="noload")
+

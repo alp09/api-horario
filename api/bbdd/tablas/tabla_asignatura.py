@@ -12,4 +12,5 @@ class Asignatura(Base):
 	descripcion = Column(String(255))
 
 	# Relaciones
-	horario 	= relationship("Horario", back_populates="asignatura", lazy="noload")
+	horarios	= relationship("Horario", back_populates="asignatura", lazy="noload")
+	reservas	= relationship("Reserva", back_populates="asignatura", lazy="noload")

@@ -12,4 +12,5 @@ class Grupo(Base):
 	descripcion = Column(String(255))
 
 	# Relaciones
-	horario 	= relationship("Horario", back_populates="grupo", lazy="noload")
+	horarios 	= relationship("Horario", back_populates="grupo", lazy="noload")
+	reservas	= relationship("Reserva", back_populates="grupo", lazy="noload")

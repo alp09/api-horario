@@ -15,3 +15,4 @@ class TramoHorario(Base):
 
 	# Relaciones
 	horario 	= relationship("Horario", back_populates="tramo", lazy="noload")
+	reservas 	= relationship("Reserva", back_populates="tramo", lazy="noload")
