@@ -8,10 +8,10 @@ class TramoHorario(Base):
 	__tablename__ = "tramo_horario"
 
 	# Columnas
-	id			= Column(Integer(), primary_key=True)
+	id			= Column(Integer, primary_key=True)
 	descripcion	= Column(String(50))
-	hora_inicio	= Column(Time())
-	hora_fin	= Column(Time())
+	hora_inicio	= Column(Time)
+	hora_fin	= Column(Time)
 
 	# Relaciones
-	horario 	= relationship("Horario")
+	horario 	= relationship("Horario", back_populates="tramo", lazy="noload")

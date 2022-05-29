@@ -14,4 +14,4 @@ class Profesor(Base):
 	es_admin		= Column(Boolean, default=False)
 
 	# Relaciones
-	horario			= relationship("Horario")
+	horario			= relationship("Horario", back_populates="profesor", lazy="noload")

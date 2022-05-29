@@ -3,5 +3,6 @@ from . import (
 	router_aula,
 	router_grupo,
 	router_login,
+	router_horario,
 	router_profesor
 )
