@@ -6,12 +6,12 @@ from api.bbdd.tablas import Horario
 from api.excepciones.bbdd import IntegridadError, DatosInvalidosError
 
 
-def seleccionar_todos():
+def seleccionar_todos() -> list[Horario]:
 	sql = select(Horario)
 
 	with get_sesion() as sesion:
-		resultado = sesion.execute(sql).scalars().all()
-		return resultado
+		horarios_seleccionados = sesion.execute(sql).scalars().all()
+		return horarios_seleccionados
 
 
 def insertar(datos_horarios: list[dict]) -> list[Horario]:
@@ -29,7 +29,9 @@ def insertar(datos_horarios: list[dict]) -> list[Horario]:
 
 	try:
 		with get_sesion() as sesion:
-			return sesion.execute(orm_stmt).scalars().all()
+			horarios_insertados = sesion.execute(orm_stmt).scalars().all()
+			sesion.commit()
+			return horarios_insertados
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -37,7 +39,7 @@ def insertar(datos_horarios: list[dict]) -> list[Horario]:
 		raise DatosInvalidosError(excepcion.orig.pgerror)
 
 
-def actualizar_por_codigo(codigo_horario: int, datos_horario: dict) -> Horario:
+def actualizar_por_codigo(codigo_horario: int, datos_horario: dict) -> Horario | None:
 	sql = (
 		update(Horario)
 		.where(Horario.id == codigo_horario)
@@ -53,7 +55,9 @@ def actualizar_por_codigo(codigo_horario: int, datos_horario: dict) -> Horario:
 
 	try:
 		with get_sesion() as sesion:
-			return sesion.execute(orm_stmt).scalars().one_or_none()
+			horario_actualizado = sesion.execute(orm_stmt).scalars().one_or_none()
+			sesion.commit()
+			return horario_actualizado
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -61,18 +65,14 @@ def actualizar_por_codigo(codigo_horario: int, datos_horario: dict) -> Horario:
 		raise DatosInvalidosError(excepcion.orig.pgerror)
 
 
-def borrar(id_horarios: list[int]) -> list[Horario]:
+def borrar(id_horarios: list[int]) -> list[int]:
 	sql = (
 		delete(Horario)
 		.where(Horario.id.in_(id_horarios))
-		.returning(Horario)
-	)
-
-	orm_stmt = (
-		select(Horario)
-		.from_statement(sql)
-		.execution_options(populate_existing=True)
+		.returning(Horario.id)
 	)
 
 	with get_sesion() as sesion:
-		return sesion.execute(orm_stmt).scalars().all()
+		id_horarios_eliminados = sesion.execute(sql).scalars().all()
+		sesion.commit()
+		return id_horarios_eliminados

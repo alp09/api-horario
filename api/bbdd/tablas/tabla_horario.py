@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 from ..bbdd import Base
@@ -17,9 +17,9 @@ class Horario(Base):
 	codigo_grupo		= Column(ForeignKey("grupo.codigo"), nullable=True)
 
 	# Relaciones
-	dia 		= relationship("DiaSemana", 	back_populates="horario", lazy="joined")
-	tramo 		= relationship("TramoHorario", 	back_populates="horario", lazy="joined")
-	asignatura 	= relationship("Asignatura", 	back_populates="horario", lazy="joined")
-	profesor 	= relationship("Profesor", 		back_populates="horario", lazy="joined")
-	aula 		= relationship("Aula", 			back_populates="horario", lazy="joined")
-	grupo 		= relationship("Grupo", 		back_populates="horario", lazy="joined")
+	dia 		= relationship("DiaSemana", 	lazy="selectin")
+	tramo 		= relationship("TramoHorario", 	lazy="selectin")
+	asignatura 	= relationship("Asignatura", 	lazy="selectin")
+	profesor 	= relationship("Profesor", 		lazy="selectin")
+	aula 		= relationship("Aula", 			lazy="selectin")
+	grupo 		= relationship("Grupo", 		lazy="selectin")

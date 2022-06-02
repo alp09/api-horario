@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, Time
-from sqlalchemy.orm import relationship
 
 from ..bbdd import Base
 
@@ -12,6 +11,3 @@ class TramoHorario(Base):
 	descripcion	= Column(String(50))
 	hora_inicio	= Column(Time)
 	hora_fin	= Column(Time)
-
-	# Relaciones
-	horario 	= relationship("Horario", back_populates="tramo", lazy="noload")

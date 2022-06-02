@@ -1,5 +1,4 @@
 from sqlalchemy import Column, String, Boolean
-from sqlalchemy.orm import relationship
 
 from ..bbdd import Base
 
@@ -12,6 +11,3 @@ class Profesor(Base):
 	nombre_completo = Column(String(255))
 	email			= Column(String(255), unique=True)
 	es_admin		= Column(Boolean, default=False)
-
-	# Relaciones
-	horario			= relationship("Horario", back_populates="profesor", lazy="noload")

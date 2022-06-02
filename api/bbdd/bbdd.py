@@ -24,6 +24,8 @@ def inicializar_conexion():
 
 		:return: devuelve el objeto Engine
 		"""
+		from configparser import ConfigParser
+
 		# Crea el configparser
 		configparser = ConfigParser()
 		configparser.read(path_archivo_settings)
@@ -45,7 +47,7 @@ def inicializar_conexion():
 
 	global engine, Sessionmaker
 	engine = generar_engine()
-	Sessionmaker = sessionmaker(bind=engine, future=True)
+	Sessionmaker = sessionmaker(bind=engine, future=True, expire_on_commit=False)
 
 
 def cerrar_conexion():
