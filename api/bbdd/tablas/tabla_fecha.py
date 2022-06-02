@@ -8,7 +8,7 @@ class Fecha(Base):
 	__tablename__ = "fecha"
 
 	# Columnas
-	fecha 		= Column(Date, primary_key=True)
+	fecha = Column(Date, primary_key=True)
 
 	# Relaciones
-	reservas 	= relationship("Reserva", back_populates="fecha", lazy="noload")
+	reservas = relationship("Reserva", lazy="select")
