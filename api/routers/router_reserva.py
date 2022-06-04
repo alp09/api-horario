@@ -20,6 +20,14 @@ def get_todos():
 	return reservas_encontradas
 
 
+@router.get("/{id_reserva}", response_model=ReservaOut, status_code=status.HTTP_200_OK)
+def get_por_id(id_reserva: int):
+	reserva_encontrada = servicio_reserva.get_por_id(id_reserva)
+	if not reserva_encontrada:
+		raise CodigoNoEncontrado(id_reserva)
+	return reserva_encontrada
+
+
 @router.post("/", response_model=list[ReservaOut], status_code=status.HTTP_201_CREATED)
 def insertar(reservas_nuevas: list[ReservaIn]):
 	reserva_creada = servicio_reserva.insertar(reservas_nuevas)
@@ -38,11 +46,11 @@ def actualizar_por_codigo(id_reserva: int, reserva_editada: ReservaIn):
 def borrar_todo(id_reservas: list[int]):
 	reservas_eliminadas = servicio_reserva.borrar(id_reservas)
 	if not reservas_eliminadas:
-		return CodigoNoEncontrado(id_reservas)
+		raise CodigoNoEncontrado(id_reservas)
 
 
 @router.delete("/{id_reserva}", status_code=status.HTTP_204_NO_CONTENT)
 def borrar_por_codigo(id_reserva: int):
 	reserva_eliminada = servicio_reserva.borrar_por_codigo(id_reserva)
 	if not reserva_eliminada:
-		return CodigoNoEncontrado(id_reserva)
+		raise CodigoNoEncontrado(id_reserva)
