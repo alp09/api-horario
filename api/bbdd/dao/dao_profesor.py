@@ -12,23 +12,14 @@ def seleccionar_todos() -> list[Profesor]:
 
 	:return: una lista de todos los profesores guardados
 	"""
-	sql = select(Profesor).order_by(Profesor.codigo)
+	sql = (
+		select(Profesor)
+		.order_by(Profesor.codigo)
+	)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).all()
-
-
-def seleccionar_por_codigos(codigos_profesores: list[str]) -> list[Profesor]:
-	"""
-	Selecciona todos los profesores cuyo código se encuentre en la lista codigos_profesores
-
-	:param codigos_profesores: la lista de códigos de profesores que se quieren encontrar
-	:return: una lista de todos los profesores encontrados
-	"""
-	sql = select(Profesor).where(Profesor.codigo.in_(codigos_profesores))
-
-	with get_conexion() as conexion:
-		return conexion.execute(sql).all()
+		profesores_seleccionados = conexion.execute(sql).all()
+		return profesores_seleccionados
 
 
 def seleccionar_por_codigo(codigo_profesor: str) -> Profesor | None:
@@ -38,10 +29,14 @@ def seleccionar_por_codigo(codigo_profesor: str) -> Profesor | None:
 	:param codigo_profesor: el código del profesor que se busca
 	:return: el profesor si se encuentra o None si ningún profesor tiene asignado ese código
 	"""
-	sql = select(Profesor).where(Profesor.codigo == codigo_profesor)
+	sql = (
+		select(Profesor)
+		.where(Profesor.codigo == codigo_profesor)
+	)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).one_or_none()
+		profesor_seleccionado = conexion.execute(sql).one_or_none()
+		return profesor_seleccionado
 
 
 def seleccionar_por_email(email_profesor: str) -> Profesor | None:
@@ -54,7 +49,8 @@ def seleccionar_por_email(email_profesor: str) -> Profesor | None:
 	sql = select(Profesor).where(Profesor.email == email_profesor)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).one_or_none()
+		profesor_seleccionado = conexion.execute(sql).one_or_none()
+		return profesor_seleccionado
 
 
 def insertar(datos_profesores: list[dict]) -> list[Profesor]:
@@ -72,7 +68,8 @@ def insertar(datos_profesores: list[dict]) -> list[Profesor]:
 
 	try:
 		with get_transaccion() as transaccion:
-			return transaccion.execute(sql).all()
+			profesores_insertados = transaccion.execute(sql).all()
+			return profesores_insertados
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -95,7 +92,8 @@ def actualizar_por_codigo(codigo_profesor: str, datos_profesor: dict) -> Profeso
 
 	try:
 		with get_conexion() as conexion:
-			return conexion.execute(sql).one_or_none()
+			profesores_actualizados = conexion.execute(sql).one_or_none()
+			return profesores_actualizados
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -115,4 +113,5 @@ def borrar(codigos_profesores: list[str]) -> list[str]:
 	)
 
 	with get_transaccion() as transaccion:
-		return transaccion.scalars(sql).all()
+		profesores_eliminados = transaccion.scalars(sql).all()
+		return profesores_eliminados

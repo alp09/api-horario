@@ -12,23 +12,14 @@ def seleccionar_todas() -> list[Asignatura]:
 
 	:return: una lista de todas las asignaturas guardadas
 	"""
-	sql = select(Asignatura).order_by(Asignatura.codigo)
+	sql = (
+		select(Asignatura)
+		.order_by(Asignatura.codigo)
+	)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).all()
-
-
-def seleccionar_por_codigos(codigos_asignaturas: list[str]) -> list[Asignatura]:
-	"""
-	Selecciona todas las asignaturas cuyo código se encuentre en la lista codigos_asignaturas
-
-	:param codigos_asignaturas: la lista de códigos de asignaturas que se quieren encontrar
-	:return: una lista de todas las asignaturas encontradas
-	"""
-	sql = select(Asignatura).where(Asignatura.codigo.in_(codigos_asignaturas))
-
-	with get_conexion() as conexion:
-		return conexion.execute(sql).all()
+		asignaturas_seleccionadas = conexion.execute(sql).all()
+		return asignaturas_seleccionadas
 
 
 def seleccionar_por_codigo(codigo_asignatura: str) -> Asignatura | None:
@@ -38,10 +29,14 @@ def seleccionar_por_codigo(codigo_asignatura: str) -> Asignatura | None:
 	:param codigo_asignatura: el código de la asignatura que se busca
 	:return: la asignatura si se encuentra o None si ninguna asignatura tiene asignado ese código
 	"""
-	sql = select(Asignatura).where(Asignatura.codigo == codigo_asignatura)
+	sql = (
+		select(Asignatura)
+		.where(Asignatura.codigo == codigo_asignatura)
+	)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).one_or_none()
+		asignatura_seleccionada = conexion.execute(sql).one_or_none()
+		return asignatura_seleccionada
 
 
 def insertar(datos_asignaturas: list[dict]) -> list[Asignatura]:
@@ -59,7 +54,8 @@ def insertar(datos_asignaturas: list[dict]) -> list[Asignatura]:
 
 	try:
 		with get_transaccion() as transaccion:
-			return transaccion.execute(sql).all()
+			asignaturas_insertadas = transaccion.execute(sql).all()
+			return asignaturas_insertadas
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -82,7 +78,8 @@ def actualizar_por_codigo(codigo_asignatura: str, datos_asingaturas: dict) -> As
 
 	try:
 		with get_conexion() as conexion:
-			return conexion.execute(sql).one_or_none()
+			asignaturas_actualizadas = conexion.execute(sql).one_or_none()
+			return asignaturas_actualizadas
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -102,4 +99,5 @@ def borrar(codigos_asignaturas: list[str]) -> list[str]:
 	)
 
 	with get_transaccion() as transaccion:
-		return transaccion.scalars(sql).all()
+		asignaturas_borradas = transaccion.scalars(sql).all()
+		return asignaturas_borradas

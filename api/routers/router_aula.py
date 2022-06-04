@@ -13,43 +13,44 @@ router = APIRouter(
 
 
 @router.get("/", response_model=list[Aula], status_code=status.HTTP_200_OK)
-def get_todos():
-	if resultado := servicio_aula.get_todas():
-		return resultado
-	else:
+def get_todas_las_aulas():
+	aulas_encontradas = servicio_aula.get_todas()
+	if not aulas_encontradas:
 		raise SinRegistros
+	return aulas_encontradas
 
 
 @router.get("/{codigo_aula}", response_model=Aula, status_code=status.HTTP_200_OK)
-def get_por_codigo(codigo_aula: str):
-	if resultado := servicio_aula.get_por_codigo(codigo_aula):
-		return resultado
-	else:
+def get_aula_por_codigo(codigo_aula: str):
+	aula_encontrada = servicio_aula.get_por_codigo(codigo_aula)
+	if not aula_encontrada:
 		raise CodigoNoEncontrado(codigo_aula)
+	return aula_encontrada
 
 
 @router.post("/", response_model=list[Aula], status_code=status.HTTP_201_CREATED)
-def insertar(aulas_nuevas: list[Aula]):
-	return servicio_aula.insertar(aulas_nuevas)
+def crear_aulas(aulas_nuevas: list[Aula]):
+	aulas_creadas = servicio_aula.crear_aulas(aulas_nuevas)
+	return aulas_creadas
 
 
 @router.put("/{codigo_aula}", response_model=Aula, status_code=status.HTTP_200_OK)
-def actualizar_por_codigo(codigo_aula: str, aula_editada: Aula):
-	aula_actualizada = servicio_aula.actualizar_uno(codigo_aula, aula_editada)
+def actualizar_aula_por_codigo(codigo_aula: str, aula_editada: Aula):
+	aula_actualizada = servicio_aula.actualizar_por_codigo(codigo_aula, aula_editada)
 	if not aula_actualizada:
 		raise CodigoNoEncontrado(codigo_aula)
 	return aula_actualizada
 
 
 @router.delete("/", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
-def borrar(codigos_aulas: list[str]):
-	asignatuas_eliminadas = servicio_aula.borrar(codigos_aulas)
+def borrar_aulas(codigos_aulas: list[str]):
+	asignatuas_eliminadas = servicio_aula.borrar_aulas(codigos_aulas)
 	if not asignatuas_eliminadas:
 		raise CodigoNoEncontrado(codigos_aulas)
 
 
 @router.delete("/{codigo_aula}", response_class=Response, status_code=status.HTTP_204_NO_CONTENT)
-def borrar_por_codigo(codigo_aula: str):
-	aula_eliminada = servicio_aula.borrar_uno(codigo_aula)
+def borrar_aula_por_codigo(codigo_aula: str):
+	aula_eliminada = servicio_aula.borrar_por_codigo(codigo_aula)
 	if not aula_eliminada:
 		raise CodigoNoEncontrado(codigo_aula)

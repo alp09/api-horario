@@ -12,23 +12,14 @@ def seleccionar_todos() -> list[Grupo]:
 
 	:return: una lista de todos los grupos guardados
 	"""
-	sql = select(Grupo).order_by(Grupo.codigo)
+	sql = (
+		select(Grupo)
+		.order_by(Grupo.codigo)
+	)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).all()
-
-
-def seleccionar_por_codigos(codigos_grupos: list[str]) -> list[Grupo]:
-	"""
-	Selecciona todos los grupos cuyo código se encuentre en la lista codigos_grupos
-
-	:param codigos_grupos: la lista de códigos de grupos que se quieren encontrar
-	:return: una lista de todos los grupos encontrados
-	"""
-	sql = select(Grupo).where(Grupo.codigo.in_(codigos_grupos))
-
-	with get_conexion() as conexion:
-		return conexion.execute(sql).all()
+		grupos_seleccionados = conexion.execute(sql).all()
+		return grupos_seleccionados
 
 
 def seleccionar_por_codigo(codigo_grupo: str) -> Grupo | None:
@@ -38,10 +29,14 @@ def seleccionar_por_codigo(codigo_grupo: str) -> Grupo | None:
 	:param codigo_grupo: el código del grupo que se busca
 	:return: el grupo si se encuentra o None si ningún grupo tiene asignado ese código
 	"""
-	sql = select(Grupo).where(Grupo.codigo == codigo_grupo)
+	sql = (
+		select(Grupo)
+		.where(Grupo.codigo == codigo_grupo)
+	)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).one_or_none()
+		grupo_seleccionado = conexion.execute(sql).one_or_none()
+		return grupo_seleccionado
 
 
 def insertar(datos_grupos: list[dict]) -> list[Grupo]:
@@ -59,7 +54,8 @@ def insertar(datos_grupos: list[dict]) -> list[Grupo]:
 
 	try:
 		with get_transaccion() as transaccion:
-			return transaccion.execute(sql).all()
+			grupos_insertados = transaccion.execute(sql).all()
+			return grupos_insertados
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -82,7 +78,8 @@ def actualizar_por_codigo(codigo_grupo: str, datos_grupo: dict) -> Grupo:
 
 	try:
 		with get_conexion() as conexion:
-			return conexion.execute(sql).one_or_none()
+			grupo_actualizado = conexion.execute(sql).one_or_none()
+			return grupo_actualizado
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -102,4 +99,5 @@ def borrar(codigos_grupos: list[str]) -> list[str]:
 	)
 
 	with get_transaccion() as transaccion:
-		return transaccion.scalars(sql).all()
+		grupo_eliminado = transaccion.scalars(sql).all()
+		return grupo_eliminado

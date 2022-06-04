@@ -4,58 +4,63 @@ from api.esquemas import Grupo
 
 def get_todos() -> list[Grupo]:
 	"""
-	Llama a la funcion seleccionar_todos del dao_grupo
+	Llama a la función select_todos del dao_grupo
 
 	:return: una lista con todos los grupos encontrados
 	"""
-	return dao_grupo.seleccionar_todos()
+	grupos_seleccionados = dao_grupo.seleccionar_todos()
+	return grupos_seleccionados
 
 
 def get_por_codigo(codigo_grupo: str) -> Grupo | None:
 	"""
-	Llama a la funcion seleccionar_por_codigo del dao_grupo
+	Llama a la función select_por_id del dao_grupo
 
 	:param codigo_grupo: el codigo del grupo que se busca
-	:return: el grupo código se encuentra o None si ningún grupo tiene asignado ese código
+	:return: el grupo si se encuentra o None si ningún grupo tiene asignado ese código
 	"""
-	return dao_grupo.seleccionar_por_codigo(codigo_grupo)
+	grupo_seleccionado = dao_grupo.seleccionar_por_codigo(codigo_grupo)
+	return grupo_seleccionado
 
 
-def insertar(datos_grupos: list[Grupo]) -> list[Grupo]:
+def crear_grupos(grupos_nuevos: list[Grupo]) -> list[Grupo]:
 	"""
-	Llama a la funcion insertar del dao_grupo con la lista de datos de grupos que se quiere insertar
+	Llama a la función insert del dao_grupo con la lista de datos de grupos que se quiere insertar
 
-	:param datos_grupos: los datos de los grupos que se quiere guardar
+	:param grupos_nuevos: los datos de los grupos que se quiere guardar
 	:return: la representación de los grupos insertados en la BBDD
 	"""
-	grupos_procesados = [grupo.dict() for grupo in datos_grupos]
-	return dao_grupo.insertar(grupos_procesados)
+	grupos_procesados = [grupo.dict() for grupo in grupos_nuevos]
+	grupos_creados = dao_grupo.insertar(grupos_procesados)
+	return grupos_creados
 
 
-def actualizar_uno(codigo_grupo: str, datos_grupo: Grupo) -> Grupo | None:
+def actualizar_por_codigo(codigo_grupo: str, grupo_editado: Grupo) -> Grupo | None:
 	"""
-	Llama a la funcion actualizar_por_codigo del dao_grupo con los datos del grupo que se quiere actualizar
+	Llama a la función update_por_id del dao_grupo con los datos del grupo que se quiere actualizar
 
 	:param codigo_grupo: el código del grupo que se va a actualizar
-	:param datos_grupo: los datos actualizados del grupo
-	:return: los datos actualizados del grupo o None si hubo algún error
+	:param grupo_editado: los datos actualizados del grupo
+	:return: el grupo actualizado o None si hubo algún error
 	"""
-	return dao_grupo.actualizar_por_codigo(codigo_grupo, datos_grupo.dict())
+	grupo_actualizado = dao_grupo.actualizar_por_codigo(codigo_grupo, grupo_editado.dict())
+	return grupo_actualizado
 
 
-def borrar(codigos_grupos: list[str]) -> list[str]:
+def borrar_grupos(codigos_grupos: list[str]) -> list[str]:
 	"""
-	Llama a la funcion borrar del dao_grupo con la lista de grupos que se quiere borrar
+	Llama a la función delete del dao_grupo con la lista de grupos que se quiere borrar
 
 	:param codigos_grupos: una lista que contiene todos los grupos que se quieren borrar
 	:return: una lista con los codigos de los grupos que se han borrado
 	"""
-	return dao_grupo.borrar(codigos_grupos)
+	grupos_eliminados = dao_grupo.borrar(codigos_grupos)
+	return grupos_eliminados
 
 
-def borrar_uno(codigo_grupo: str) -> bool:
+def borrar_por_codigo(codigo_grupo: str) -> bool:
 	"""
-	Llama a la funcion borrar del dao_grupo con el codigo del grupo que se quiere borrar
+	Llama a la función delete del dao_grupo con el codigo del grupo que se quiere borrar
 
 	:param codigo_grupo: el código del grupo que se quiere borrar
 	:return: True si el grupo se ha eliminado o False si hubo un error (no existe)

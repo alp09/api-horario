@@ -12,23 +12,14 @@ def seleccionar_todas() -> list[Aula]:
 
 	:return: una lista de todas las aulas guardadas
 	"""
-	sql = select(Aula).order_by(Aula.codigo)
+	sql = (
+		select(Aula)
+		.order_by(Aula.codigo)
+	)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).all()
-
-
-def seleccionar_por_codigos(codigos_aulas: list[str]) -> list[Aula]:
-	"""
-	Selecciona todas las aulas cuyo código se encuentre en la lista codigos_aulas
-
-	:param codigos_aulas: la lista de códigos de aulas que se quieren encontrar
-	:return: una lista de todas las aulas encontradas
-	"""
-	sql = select(Aula).where(Aula.codigo.in_(codigos_aulas))
-
-	with get_conexion() as conexion:
-		return conexion.execute(sql).all()
+		aulas_seleccionadas = conexion.execute(sql).all()
+		return aulas_seleccionadas
 
 
 def seleccionar_por_codigo(codigo_aula: str) -> Aula | None:
@@ -38,10 +29,14 @@ def seleccionar_por_codigo(codigo_aula: str) -> Aula | None:
 	:param codigo_aula: el código del aula que se busca
 	:return: el aula si se encuentra o None si ninguna aula tiene asignado ese código
 	"""
-	sql = select(Aula).where(Aula.codigo == codigo_aula)
+	sql = (
+		select(Aula)
+		.where(Aula.codigo == codigo_aula)
+	)
 
 	with get_conexion() as conexion:
-		return conexion.execute(sql).one_or_none()
+		aula_seleccionada = conexion.execute(sql).one_or_none()
+		return aula_seleccionada
 
 
 def insertar(datos_aulas: list[dict]) -> list[Aula]:
