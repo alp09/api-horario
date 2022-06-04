@@ -4,4 +4,5 @@ from .tabla_dia_semana import DiaSemana
 from .tabla_grupo import Grupo
 from .tabla_horario import Horario
 from .tabla_profesor import Profesor
+from .tabla_reserva import Reserva
 from .tabla_tramo_horario import TramoHorario

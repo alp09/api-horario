@@ -3,7 +3,6 @@ from sqlalchemy.engine import Engine, Connection
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
 
-from api.config import path_archivo_settings
 
 # Base usada para crear los modelos de tablas
 Base = declarative_base()
@@ -24,21 +23,10 @@ def inicializar_conexion():
 
 		:return: devuelve el objeto Engine
 		"""
-		from configparser import ConfigParser
-
-		# Crea el configparser
-		configparser = ConfigParser()
-		configparser.read(path_archivo_settings)
-
-		# Lee las variables necesarias
-		username = configparser.get("DATABASE", "username")
-		password = configparser.get("DATABASE", "password")
-		host 	 = configparser.get("DATABASE", "host")
-		port 	 = configparser.get("DATABASE", "port")
-		database = configparser.get("DATABASE", "database")
+		from api.config import DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE
 
 		return create_engine(
-			url=f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}",
+			url=f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}",
 			pool_size=5,
 			max_overflow=10,
 			future=True,
@@ -46,8 +34,15 @@ def inicializar_conexion():
 		)
 
 	global engine, Sessionmaker
+
+	# Genera el engine
 	engine = generar_engine()
+
+	# Genera el session factory
 	Sessionmaker = sessionmaker(bind=engine, future=True, expire_on_commit=False)
+
+	# Genera las tablas de la BBDD si no existen
+	Base.metadata.create_all(bind=engine)
 
 
 def cerrar_conexion():
