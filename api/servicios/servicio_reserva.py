@@ -7,6 +7,11 @@ def get_todos() -> list[ReservaOut]:
 	return reservas_encontrados
 
 
+def get_por_id(id_reserva: int) -> ReservaOut | None:
+	reserva_encontrada = dao_reserva.seleccionar_por_id(id_reserva)
+	return reserva_encontrada
+
+
 def insertar(reservas_nuevos: list[ReservaIn]) -> list[ReservaOut]:
 	reservas_procesados = [reserva.dict(exclude_unset=True) for reserva in reservas_nuevos]
 	reservas_insertados = dao_reserva.insertar(reservas_procesados)

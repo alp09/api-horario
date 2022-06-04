@@ -39,7 +39,7 @@ def inicializar_conexion():
 	engine = generar_engine()
 
 	# Genera el session factory
-	Sessionmaker = sessionmaker(bind=engine, future=True)
+	Sessionmaker = sessionmaker(bind=engine, future=True, expire_on_commit=False)
 
 	# Genera las tablas de la BBDD si no existen
 	Base.metadata.create_all(bind=engine)

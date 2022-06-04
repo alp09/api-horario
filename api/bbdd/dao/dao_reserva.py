@@ -1,7 +1,7 @@
 from sqlalchemy import select, insert, update, delete
 from sqlalchemy.exc import IntegrityError, InternalError
 
-from api.bbdd import get_sesion, get_transaccion
+from api.bbdd import get_sesion
 from api.bbdd.tablas import Reserva
 from api.excepciones.bbdd import IntegridadError, DatosInvalidosError
 
@@ -10,15 +10,19 @@ def seleccionar_todos() -> list[Reserva]:
 	sql = select(Reserva)
 
 	with get_sesion() as sesion:
-		resultado = sesion.execute(sql).scalars().all()
-		return resultado
+		reservas_seleccionadas = sesion.execute(sql).scalars().all()
+		return reservas_seleccionadas
 
 
 def seleccionar_por_id(id_reserva: int) -> Reserva | None:
-	sql = select(Reserva).where(Reserva.id == id_reserva)
+	sql = (
+		select(Reserva)
+		.where(Reserva.id == id_reserva)
+	)
 
 	with get_sesion() as sesion:
-		return sesion.execute(sql).scalars().one_or_none()
+		reserva_seleccionada = sesion.execute(sql).scalars().one_or_none()
+		return reserva_seleccionada
 
 
 def insertar(datos_reservas: list[dict]) -> list[Reserva]:
@@ -36,7 +40,9 @@ def insertar(datos_reservas: list[dict]) -> list[Reserva]:
 
 	try:
 		with get_sesion() as sesion:
-			return sesion.execute(orm_stmt).scalars().all()
+			reservas_creadas = sesion.execute(orm_stmt).scalars().all()
+			sesion.commit()
+			return reservas_creadas
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -60,7 +66,9 @@ def actualizar_por_codigo(codigo_reserva: int, datos_reserva: dict) -> Reserva |
 
 	try:
 		with get_sesion() as sesion:
-			return sesion.execute(orm_stmt).scalars().one_or_none()
+			reservas_actualizadas = sesion.execute(orm_stmt).scalars().all()
+			sesion.commit()
+			return reservas_actualizadas
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)
@@ -75,5 +83,7 @@ def borrar(id_reservas: list[int]) -> list[int]:
 		.returning(Reserva.id)
 	)
 
-	with get_transaccion() as transaccion:
-		return transaccion.scalars(sql).all()
+	with get_sesion() as sesion:
+		reservas_eliminadas = sesion.execute(sql).scalars().all()
+		sesion.commit()
+		return reservas_eliminadas
