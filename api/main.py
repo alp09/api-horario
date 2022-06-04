@@ -29,9 +29,10 @@ app.add_middleware(
 app.include_router(router_asignatura.router)
 app.include_router(router_aula.router)
 app.include_router(router_grupo.router)
-app.include_router(router_login.router)
 app.include_router(router_horario.router)
+app.include_router(router_login.router)
 app.include_router(router_profesor.router)
+app.include_router(router_reserva.router)
 
 
 @app.on_event("startup")
