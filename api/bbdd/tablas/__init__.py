@@ -1,7 +1,6 @@
 from .tabla_asignatura import Asignatura
 from .tabla_aula import Aula
 from .tabla_dia_semana import DiaSemana
-from .tabla_fecha import Fecha
 from .tabla_grupo import Grupo
 from .tabla_horario import Horario
 from .tabla_profesor import Profesor

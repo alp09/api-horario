@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy import Column, ForeignKey, Integer, Date
 from sqlalchemy.orm import relationship
 
 from ..bbdd import Base
@@ -9,7 +9,7 @@ class Reserva(Base):
 
 	# Columnas
 	id					= Column(Integer, primary_key=True)
-	id_fecha			= Column(ForeignKey("fecha.fecha"))
+	fecha				= Column(Date)
 	id_tramo			= Column(ForeignKey("tramo_horario.id"))
 	codigo_asignatura	= Column(ForeignKey("asignatura.codigo"))
 	codigo_profesor		= Column(ForeignKey("profesor.codigo"))
@@ -17,7 +17,6 @@ class Reserva(Base):
 	codigo_grupo		= Column(ForeignKey("grupo.codigo"), nullable=True)
 
 	# Relaciones
-	fecha		= relationship("Fecha",			lazy="selectin", backref="reservas")
 	tramo 		= relationship("TramoHorario", 	lazy="selectin")
 	asignatura 	= relationship("Asignatura", 	lazy="selectin")
 	profesor 	= relationship("Profesor", 		lazy="selectin")
