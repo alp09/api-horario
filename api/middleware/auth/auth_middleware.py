@@ -11,7 +11,7 @@ from api.excepciones.auth import UsuarioNoLogeado, PermisosInsuficientesError, S
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme)):
+async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme)) -> Profesor:
 	"""
 	La dependencia de oauth2_scheme comprueba que en HEADER de la petición HTTP se encuentre
 	un token en la clave Authorization. De ser así lo asigna al parámetro jwt_token.
@@ -38,7 +38,7 @@ async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme)):
 	return Profesor(**payload)
 
 
-async def validar_profesor_es_admin(profesor_logeado: Profesor = Depends(validar_profesor_logeado)):
+async def validar_profesor_es_admin(profesor_logeado: Profesor = Depends(validar_profesor_logeado)) -> Profesor:
 	"""
 	Valida que el profesor que ha iniciado sesión tiene permisos de administrador.
 	Estos datos se guardan en el payload del token JWT, de ahí la dependencia con la función validar_profesor_logeado.
@@ -48,3 +48,4 @@ async def validar_profesor_es_admin(profesor_logeado: Profesor = Depends(validar
 	"""
 	if not profesor_logeado.es_admin:
 		raise PermisosInsuficientesError
+	return profesor_logeado

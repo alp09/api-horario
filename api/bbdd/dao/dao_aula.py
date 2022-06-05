@@ -76,8 +76,8 @@ def actualizar_por_codigo(codigo_aula: str, datos_asingaturas: dict) -> Aula:
 	)
 
 	try:
-		with get_conexion() as conexion:
-			return conexion.execute(sql).one_or_none()
+		with get_transaccion() as transaccion:
+			return transaccion.execute(sql).one_or_none()
 
 	except IntegrityError as excepcion:
 		raise IntegridadError(excepcion.orig.pgerror)

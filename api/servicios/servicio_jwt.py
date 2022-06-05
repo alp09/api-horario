@@ -1,4 +1,6 @@
 import jwt
+from datetime import datetime, timedelta
+
 from api.config import SECRET_KEY, ALGORITMO
 
 
@@ -9,12 +11,11 @@ def generar_jwt_token(datos: dict) -> str:
 	:param datos: los datos que se quieren guardar en el payload
 	:return: el token jwt como string
 	"""
-	from datetime import datetime, timedelta
-
 	payload = datos.copy()
 	payload.update({"exp": datetime.now() + timedelta(minutes=30)})
 
-	return jwt.encode(payload, SECRET_KEY, ALGORITMO)
+	jwt_token = jwt.encode(payload, SECRET_KEY, ALGORITMO)
+	return jwt_token
 
 
 def decodificar_jwt_token(token: str) -> dict:
@@ -24,4 +25,5 @@ def decodificar_jwt_token(token: str) -> dict:
 	:param token: el token que se va a decodificar
 	:return: el payload del token
 	"""
-	return jwt.decode(token, SECRET_KEY, ALGORITMO)
+	payload = jwt.decode(token, SECRET_KEY, ALGORITMO)
+	return payload

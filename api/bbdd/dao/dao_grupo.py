@@ -77,8 +77,8 @@ def actualizar_por_codigo(codigo_grupo: str, datos_grupo: dict) -> Grupo:
 	)
 
 	try:
-		with get_conexion() as conexion:
-			grupo_actualizado = conexion.execute(sql).one_or_none()
+		with get_transaccion() as transaccion:
+			grupo_actualizado = transaccion.execute(sql).one_or_none()
 			return grupo_actualizado
 
 	except IntegrityError as excepcion:

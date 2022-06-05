@@ -91,8 +91,8 @@ def actualizar_por_codigo(codigo_profesor: str, datos_profesor: dict) -> Profeso
 	)
 
 	try:
-		with get_conexion() as conexion:
-			profesores_actualizados = conexion.execute(sql).one_or_none()
+		with get_transaccion() as transaccion:
+			profesores_actualizados = transaccion.execute(sql).one_or_none()
 			return profesores_actualizados
 
 	except IntegrityError as excepcion:

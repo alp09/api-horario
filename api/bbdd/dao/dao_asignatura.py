@@ -77,8 +77,8 @@ def actualizar_por_codigo(codigo_asignatura: str, datos_asingaturas: dict) -> As
 	)
 
 	try:
-		with get_conexion() as conexion:
-			asignaturas_actualizadas = conexion.execute(sql).one_or_none()
+		with get_transaccion() as transaccion:
+			asignaturas_actualizadas = transaccion.execute(sql).one_or_none()
 			return asignaturas_actualizadas
 
 	except IntegrityError as excepcion:
