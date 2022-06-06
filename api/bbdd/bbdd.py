@@ -29,8 +29,7 @@ def inicializar_conexion():
 			url=f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}",
 			pool_size=5,
 			max_overflow=10,
-			future=True,
-			echo=True
+			future=True
 		)
 
 	global engine, Sessionmaker

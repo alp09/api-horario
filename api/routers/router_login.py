@@ -27,18 +27,18 @@ Los pasos a seguir para implementar el login con Google son:
 
 """
 
-
 from fastapi import APIRouter, Request
-from starlette.responses import RedirectResponse
+from fastapi.responses import RedirectResponse
 
 from api.excepciones.auth import UsuarioNoRegistradoError
 from api.servicios import servicio_login, servicio_jwt
+
 
 # Definición del router
 router = APIRouter(tags=["login"])
 
 
-@router.get("/login")
+@router.get(path="/login")
 def login(request: Request) -> RedirectResponse:
 
 	# Recoge la URL del servidor de autorización
@@ -51,8 +51,8 @@ def login(request: Request) -> RedirectResponse:
 	return RedirectResponse(url_login)
 
 
-@router.get("/login/callback")
-def login_callback(request: Request) -> str:
+@router.get(path="/login/callback")
+def login_callback(request: Request) -> dict:
 
 	# Recoge las variables necesarias para el objeto Flow
 	url_servidor_autorizacion = request.url.__str__()
@@ -70,5 +70,5 @@ def login_callback(request: Request) -> str:
 		raise UsuarioNoRegistradoError(email=email_usuario)
 
 	# Si lo está genera el JWT token con los datos del usuario registrado
-	dict_profesor = dict(profesor)
-	return servicio_jwt.generar_jwt_token(dict_profesor)
+	jwt_token = servicio_jwt.generar_jwt_token(dict(profesor))
+	return {"access_token": jwt_token}

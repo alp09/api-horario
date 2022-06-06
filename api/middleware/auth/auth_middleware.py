@@ -17,7 +17,7 @@ async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme)) -> P
 	un token en la clave Authorization. De ser así lo asigna al parámetro jwt_token.
 
 	Valida que el token JWT sea válido. Para que un token JWT sea válido, se debe de poder decodificar con
-	la misma clave secreta y algoritmo. Una vez decodificado, verifica que no esté caducado.
+	la misma clave secreta y algoritmo. Una vez decodificado, revisa que no esté caducado.
 
 	:param jwt_token: el token JWT que se va a validar
 	:raises UsuarioNoLogeado: si ocurre algún error durante la decodificación del token

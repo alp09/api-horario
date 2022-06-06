@@ -12,6 +12,17 @@ def get_todas() -> list[ReservaOut]:
 	return reservas_encontradas
 
 
+def get_por_lista_id(id_reservas: list[int]) -> list[ReservaOut]:
+	"""
+	Llama a la función select_por_lista_id del dao_reserva
+
+	:param id_reservas: una lista con los ID de las reservas que se quieren consultar
+	:return: las reservas encontradas
+	"""
+	reservas_encontradas = dao_reserva.seleccionar_por_lista_id(id_reservas)
+	return reservas_encontradas
+
+
 def get_por_id(id_reserva: int) -> ReservaOut | None:
 	"""
 	Llama a la función select_por_id del dao_reserva

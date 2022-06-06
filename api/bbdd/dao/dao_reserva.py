@@ -22,6 +22,23 @@ def seleccionar_todas() -> list[Reserva]:
 		return reservas_seleccionadas
 
 
+def seleccionar_por_lista_id(id_reservas: list[int]) -> list[Reserva]:
+	"""
+	Selecciona todas las reservas cuyo id se encuentre en la lista id_reservas
+
+	:param id_reservas: la lista de ID de las reservas que se quieren consultar
+	:return: las reservas encontradas
+	"""
+	sql = (
+		select(Reserva)
+		.where(Reserva.id.in_(id_reservas))
+	)
+
+	with get_sesion() as sesion:
+		reservas_seleccionadas = sesion.execute(sql).scalars().all()
+		return reservas_seleccionadas
+
+
 def seleccionar_por_id(id_reserva: int) -> Reserva | None:
 	"""
 	Selecciona el reserva cuyo código sea igual a codigo_aula

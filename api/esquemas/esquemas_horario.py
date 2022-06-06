@@ -4,7 +4,6 @@ from esquemas import DiaSemana, TramoHorario, Asignatura, Profesor, Aula, Grupo
 
 
 class HorarioIn(BaseModel):
-	id: int | None
 	id_dia: int
 	id_tramo: int
 	codigo_asignatura: str		= Field(max_length=20)

@@ -17,7 +17,7 @@ class UsuarioNoLogeado(HTTPException):
 
 
 class SesionCaducadaError(HTTPException):
-	status_code = 440 	# Login Timeout
+	status_code = status.HTTP_401_UNAUTHORIZED
 
 	def __init__(self):
 		self.detail  = "La sesión ha caducado"
@@ -26,5 +26,5 @@ class SesionCaducadaError(HTTPException):
 class PermisosInsuficientesError(HTTPException):
 	status_code = status.HTTP_403_FORBIDDEN
 
-	def __init__(self):
-		self.detail = f"Se requiren permisos de administrador para realizar esa acción"
+	def __init__(self, mensaje=None):
+		self.detail = mensaje or f"Se requiren permisos de administrador para realizar esa acción"

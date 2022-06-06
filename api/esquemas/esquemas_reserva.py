@@ -5,7 +5,6 @@ from esquemas import TramoHorario, Asignatura, Profesor, Aula, Grupo
 
 
 class ReservaIn(BaseModel):
-	id: int | None
 	fecha: date
 	id_tramo: int
 	codigo_asignatura: str		= Field(max_length=20)
