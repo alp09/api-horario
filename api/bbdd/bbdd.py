@@ -32,6 +32,21 @@ def inicializar_conexion():
 			future=True
 		)
 
+	def crear_tablas_y_triggers() -> None:
+		""" Crea las tablas, funciones, triggers de la BBDD y datos iniciales """
+		from api.bbdd.utils import functions, triggers
+
+		# Prepara los listeners para que al crear las tablas se adjunten los triggers
+		functions.generar_funciones()
+		functions.generar_funciones_trigger()
+		triggers.generar_triggers()
+
+		# Prepara los listener para rellenar los datos de la tabla dia_semana y tramo_horario
+		triggers.generar_datos_tablas()
+
+		# Genera las tablas de la BBDD si no existen
+		Base.metadata.create_all(bind=engine)
+
 	global engine, Sessionmaker
 
 	# Genera el engine
@@ -40,8 +55,8 @@ def inicializar_conexion():
 	# Genera el session factory
 	Sessionmaker = sessionmaker(bind=engine, future=True, expire_on_commit=False)
 
-	# Genera las tablas de la BBDD si no existen
-	Base.metadata.create_all(bind=engine)
+	# Ejecuta el código necesario para generar lo relacionado con la BBDD
+	crear_tablas_y_triggers()
 
 
 def cerrar_conexion():
