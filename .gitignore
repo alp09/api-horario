@@ -1,5 +1,5 @@
 # Ignores personalizados
-/api/config/archivos/
+/src/institutoapi/config/archivos/
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
