@@ -1,6 +1,7 @@
-from sqlalchemy import event, DDL
+from sqlalchemy import event
+from sqlmodel import DDL
 
-from institutoapi.bbdd.tablas import Horario, Reserva
+from institutoapi.bbdd.modelos import Horario, Reserva
 
 
 def generar_funciones():

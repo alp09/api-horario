@@ -2,8 +2,6 @@ from google_auth_oauthlib.flow import Flow		# Google ofrece una librería que fa
 from googleapiclient.discovery import build
 
 from institutoapi.config import BASE_URL, path_archivo_google
-from institutoapi.esquemas import Profesor
-from institutoapi.servicios import servicio_profesor
 
 
 # Los scopes son los distintos permisos que voy a solicitar
@@ -60,15 +58,3 @@ def get_datos_usuario(url_servidor_token: str, state: str) -> dict:
 	# Realizo una petición a la API de Google de oauth2, usando las credenciales que he conseguido
 	with build("oauth2", "v2", credentials=cliente_api.credentials) as servicio_user_info:
 		return servicio_user_info.userinfo().get().execute()
-
-
-def validar_usuario_logeado(email: str) -> Profesor | None:
-	"""
-	Valida que el email del usuario que ha iniciado sesión
-	es un usuario registrado en la base de datos
-
-	:param email: el email del usuario que ha iniciado sesión
-	:return: el profesor si se encontró o None si no existe
-	"""
-	profesor_logeado = servicio_profesor.get_por_email(email)
-	return profesor_logeado

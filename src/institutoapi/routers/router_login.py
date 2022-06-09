@@ -27,9 +27,11 @@ Los pasos a seguir para implementar el login con Google son:
 
 """
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import RedirectResponse
 
+from institutoapi.bbdd import get_sesion
+from institutoapi.bbdd.dao import dao_profesor
 from institutoapi.excepciones.auth import UsuarioNoRegistradoError
 from institutoapi.servicios import servicio_login, servicio_jwt
 
@@ -52,7 +54,7 @@ def login(request: Request) -> RedirectResponse:
 
 
 @router.get(path="/login/callback")
-def login_callback(request: Request) -> dict:
+def login_callback(request: Request, sesion_bbdd=Depends(get_sesion)) -> dict:
 
 	# Recoge las variables necesarias para el objeto Flow
 	url_servidor_autorizacion = request.url.__str__()
@@ -63,12 +65,12 @@ def login_callback(request: Request) -> dict:
 	email_usuario = datos_usuario["email"]
 
 	# Valida que el usuario está registrado en la base de datos
-	profesor = servicio_login.validar_usuario_logeado(email_usuario)
+	profesor = dao_profesor.seleccionar_por_email(sesion_bbdd, email_usuario)
 
 	# Si no lo está, devuelve una excepción Unauthorized.
 	if profesor is None:
 		raise UsuarioNoRegistradoError(email=email_usuario)
 
 	# Si lo está genera el JWT token con los datos del usuario registrado
-	jwt_token = servicio_jwt.generar_jwt_token(dict(profesor))
+	jwt_token = servicio_jwt.generar_jwt_token(profesor.dict())
 	return {"access_token": jwt_token}

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, status, Depends, Response
 
-from institutoapi.esquemas import HorarioIn, HorarioOut
+from institutoapi.bbdd import get_sesion
+from institutoapi.bbdd.dao import dao_horario
+from institutoapi.bbdd.modelos import HorarioRequest, HorarioResponse
 from institutoapi.excepciones.genericas import CodigoNoEncontrado, SinRegistros
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
-from institutoapi.servicios import servicio_horario
 
 
 # Definición del router
@@ -15,12 +16,14 @@ router = APIRouter(
 
 @router.get(
 	path="/",
-	response_model=list[HorarioOut],
+	response_model=list[HorarioResponse],
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)]
 )
-def get_todos_los_horarios():
-	horarios_encontrados = servicio_horario.get_todos()
+def get_todos_los_horarios(
+	sesion_bbdd=Depends(get_sesion)
+):
+	horarios_encontrados = dao_horario.seleccionar_todos(sesion_bbdd)
 	if not horarios_encontrados:
 		raise SinRegistros
 	return horarios_encontrados
@@ -28,23 +31,31 @@ def get_todos_los_horarios():
 
 @router.post(
 	path="/",
-	response_model=list[HorarioOut],
+	response_model=list[HorarioResponse],
 	status_code=status.HTTP_201_CREATED,
 	dependencies=[Depends(validar_profesor_logeado)]
 )
-def crear_horarios(horarios_nuevos: list[HorarioIn]):
-	horarios_creados = servicio_horario.crear_horarios(horarios_nuevos)
+def crear_horarios(
+	horarios_nuevos: list[HorarioRequest],
+	sesion_bbdd=Depends(get_sesion)
+):
+	horarios_procesados = [horario.dict() for horario in horarios_nuevos]
+	horarios_creados = dao_horario.insertar(sesion_bbdd, horarios_procesados)
 	return horarios_creados
 
 
 @router.put(
 	path="/{id_horario}",
-	response_model=HorarioOut,
+	response_model=HorarioResponse,
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def actualizar_horario_por_id(id_horario: int, horario_editado: HorarioIn):
-	horario_actualizado = servicio_horario.actualizar_por_id(id_horario, horario_editado)
+def actualizar_horario_por_id(
+	id_horario: int,
+	horario_editado: HorarioRequest,
+	sesion_bbdd=Depends(get_sesion)
+):
+	horario_actualizado = dao_horario.actualizar_por_codigo(sesion_bbdd, id_horario, horario_editado.dict())
 	if not horario_actualizado:
 		raise CodigoNoEncontrado(id_horario)
 	return horario_actualizado
@@ -55,8 +66,11 @@ def actualizar_horario_por_id(id_horario: int, horario_editado: HorarioIn):
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def borrar_horarios(id_horarios: list[int]):
-	horarios_eliminados = servicio_horario.borrar_horarios(id_horarios)
+def borrar_horarios(
+	id_horarios: list[int],
+	sesion_bbdd=Depends(get_sesion)
+):
+	horarios_eliminados = dao_horario.borrar(sesion_bbdd, id_horarios)
 	if not horarios_eliminados:
 		raise CodigoNoEncontrado(id_horarios)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -67,8 +81,11 @@ def borrar_horarios(id_horarios: list[int]):
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def borrar_horario_por_id(id_horario: int):
-	horario_eliminado = servicio_horario.borrar_por_id(id_horario)
+def borrar_horario_por_id(
+	id_horario: int,
+	sesion_bbdd=Depends(get_sesion)
+):
+	horario_eliminado = dao_horario.borrar(sesion_bbdd, [id_horario])
 	if not horario_eliminado:
 		raise CodigoNoEncontrado(id_horario)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)

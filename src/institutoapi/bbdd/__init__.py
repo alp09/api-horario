@@ -1,1 +1,1 @@
-from .bbdd import get_conexion, get_transaccion, get_sesion
+from .bbdd import get_sesion

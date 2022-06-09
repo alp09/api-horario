@@ -1,6 +1,6 @@
 from sqlalchemy import event, DDL
 
-from institutoapi.bbdd.tablas import DiaSemana, TramoHorario, Horario, Reserva
+from institutoapi.bbdd.modelos import DiaSemana, TramoHorario, Horario, Reserva
 
 
 def generar_triggers():

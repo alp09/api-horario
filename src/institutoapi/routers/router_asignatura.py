@@ -1,9 +1,10 @@
 from fastapi import APIRouter, status, Depends, Response
 
-from institutoapi.esquemas import Asignatura
+from institutoapi.bbdd import get_sesion
+from institutoapi.bbdd.dao import dao_asignatura
+from institutoapi.bbdd.modelos import Asignatura
 from institutoapi.excepciones.genericas import SinRegistros, CodigoNoEncontrado
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
-from institutoapi.servicios import servicio_asignatura
 
 
 # Definición del router
@@ -19,8 +20,10 @@ router = APIRouter(
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)]
 )
-def get_todas_las_asignaturas():
-	asignaturas_encontradas = servicio_asignatura.get_todas()
+def get_todas_las_asignaturas(
+	sesion_bbdd=Depends(get_sesion)
+):
+	asignaturas_encontradas = dao_asignatura.seleccionar_todas(sesion_bbdd)
 	if not asignaturas_encontradas:
 		raise SinRegistros
 	return asignaturas_encontradas
@@ -32,8 +35,11 @@ def get_todas_las_asignaturas():
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)]
 )
-def get_asignatura_por_codigo(codigo_asignatura: str):
-	asignatura_encontrada = servicio_asignatura.get_por_codigo(codigo_asignatura)
+def get_asignatura_por_codigo(
+	codigo_asignatura: str,
+	sesion_bbdd=Depends(get_sesion)
+):
+	asignatura_encontrada = dao_asignatura.seleccionar_por_codigo(sesion_bbdd, codigo_asignatura)
 	if not asignatura_encontrada:
 		raise CodigoNoEncontrado(codigo_asignatura)
 	return asignatura_encontrada
@@ -45,8 +51,12 @@ def get_asignatura_por_codigo(codigo_asignatura: str):
 	status_code=status.HTTP_201_CREATED,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def crear_asignaturas(asignaturas_nuevas: list[Asignatura]):
-	asignaturas_creadas = servicio_asignatura.crear_aulas(asignaturas_nuevas)
+def crear_asignaturas(
+	asignaturas_nuevas: list[Asignatura],
+	sesion_bbdd=Depends(get_sesion)
+):
+	asignaturas_procesadas = [asignatura.dict() for asignatura in asignaturas_nuevas]
+	asignaturas_creadas = dao_asignatura.insertar(sesion_bbdd, asignaturas_procesadas)
 	return asignaturas_creadas
 
 
@@ -56,8 +66,12 @@ def crear_asignaturas(asignaturas_nuevas: list[Asignatura]):
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def actualizar_asignatura_por_codigo(codigo_asignatura: str, asignatura_editada: Asignatura):
-	asignatura_actualizada = servicio_asignatura.actualizar_por_codigo(codigo_asignatura, asignatura_editada)
+def actualizar_asignatura_por_codigo(
+	codigo_asignatura: str,
+	asignatura_editada: Asignatura,
+	sesion_bbdd=Depends(get_sesion)
+):
+	asignatura_actualizada = dao_asignatura.actualizar_por_codigo(sesion_bbdd, codigo_asignatura, asignatura_editada.dict())
 	if not asignatura_actualizada:
 		raise CodigoNoEncontrado(codigo_asignatura)
 	return asignatura_actualizada
@@ -68,9 +82,12 @@ def actualizar_asignatura_por_codigo(codigo_asignatura: str, asignatura_editada:
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def borrar_asignatuas(codigos_asignaturas: list[str]):
-	asignatuas_eliminadas = servicio_asignatura.borrar_asignaturas(codigos_asignaturas)
-	if not asignatuas_eliminadas:
+def borrar_asignatuas(
+	codigos_asignaturas: list[str],
+	sesion_bbdd=Depends(get_sesion)
+):
+	asignaturas_eliminadas = dao_asignatura.borrar(sesion_bbdd, codigos_asignaturas)
+	if not asignaturas_eliminadas:
 		raise CodigoNoEncontrado(codigos_asignaturas)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -80,8 +97,11 @@ def borrar_asignatuas(codigos_asignaturas: list[str]):
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def borrar_asignatua_por_codigo(codigo_asignatura: str):
-	asignatura_eliminada = servicio_asignatura.borrar_por_codigo(codigo_asignatura)
+def borrar_asignatua_por_codigo(
+	codigo_asignatura: str,
+	sesion_bbdd=Depends(get_sesion)
+):
+	asignatura_eliminada = dao_asignatura.borrar(sesion_bbdd, [codigo_asignatura])
 	if not asignatura_eliminada:
 		raise CodigoNoEncontrado(codigo_asignatura)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)

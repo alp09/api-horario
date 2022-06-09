@@ -5,5 +5,5 @@ from . import (
 	router_horario,
 	router_login,
 	router_profesor,
-	router_reserva
+	# router_reserva
 )

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, status, Depends, Response
 
-from institutoapi.esquemas import Aula
+from institutoapi.bbdd import get_sesion
+from institutoapi.bbdd.dao import dao_aula
+from institutoapi.bbdd.modelos import Aula
 from institutoapi.excepciones.genericas import SinRegistros, CodigoNoEncontrado
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
-from institutoapi.servicios import servicio_aula
 
 
 # Definición del router
@@ -19,8 +20,10 @@ router = APIRouter(
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)]
 )
-def get_todas_las_aulas():
-	aulas_encontradas = servicio_aula.get_todas()
+def get_todas_las_aulas(
+	sesion_bbdd=Depends(get_sesion)
+):
+	aulas_encontradas = dao_aula.seleccionar_todas(sesion_bbdd)
 	if not aulas_encontradas:
 		raise SinRegistros
 	return aulas_encontradas
@@ -32,8 +35,11 @@ def get_todas_las_aulas():
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)]
 )
-def get_aula_por_codigo(codigo_aula: str):
-	aula_encontrada = servicio_aula.get_por_codigo(codigo_aula)
+def get_aula_por_codigo(
+	codigo_aula: str,
+	sesion_bbdd=Depends(get_sesion)
+):
+	aula_encontrada = dao_aula.seleccionar_por_codigo(sesion_bbdd, codigo_aula)
 	if not aula_encontrada:
 		raise CodigoNoEncontrado(codigo_aula)
 	return aula_encontrada
@@ -45,8 +51,12 @@ def get_aula_por_codigo(codigo_aula: str):
 	status_code=status.HTTP_201_CREATED,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def crear_aulas(aulas_nuevas: list[Aula]):
-	aulas_creadas = servicio_aula.crear_aulas(aulas_nuevas)
+def crear_aulas(
+	aulas_nuevas: list[Aula],
+	sesion_bbdd=Depends(get_sesion)
+):
+	aulas_procesadas = [aula.dict() for aula in aulas_nuevas]
+	aulas_creadas = dao_aula.insertar(sesion_bbdd, aulas_procesadas)
 	return aulas_creadas
 
 
@@ -56,8 +66,12 @@ def crear_aulas(aulas_nuevas: list[Aula]):
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def actualizar_aula_por_codigo(codigo_aula: str, aula_editada: Aula):
-	aula_actualizada = servicio_aula.actualizar_por_codigo(codigo_aula, aula_editada)
+def actualizar_aula_por_codigo(
+	codigo_aula: str,
+	aula_editada: Aula,
+	sesion_bbdd=Depends(get_sesion)
+):
+	aula_actualizada = dao_aula.actualizar_por_codigo(sesion_bbdd, codigo_aula, aula_editada.dict())
 	if not aula_actualizada:
 		raise CodigoNoEncontrado(codigo_aula)
 	return aula_actualizada
@@ -68,8 +82,11 @@ def actualizar_aula_por_codigo(codigo_aula: str, aula_editada: Aula):
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def borrar_aulas(codigos_aulas: list[str]):
-	asignatuas_eliminadas = servicio_aula.borrar_aulas(codigos_aulas)
+def borrar_aulas(
+	codigos_aulas: list[str],
+	sesion_bbdd=Depends(get_sesion)
+):
+	asignatuas_eliminadas = dao_aula.borrar(sesion_bbdd, codigos_aulas)
 	if not asignatuas_eliminadas:
 		raise CodigoNoEncontrado(codigos_aulas)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -80,8 +97,11 @@ def borrar_aulas(codigos_aulas: list[str]):
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(validar_profesor_es_admin)]
 )
-def borrar_aula_por_codigo(codigo_aula: str):
-	aula_eliminada = servicio_aula.borrar_por_codigo(codigo_aula)
+def borrar_aula_por_codigo(
+	codigo_aula: str,
+	sesion_bbdd=Depends(get_sesion)
+):
+	aula_eliminada = dao_aula.borrar(sesion_bbdd, [codigo_aula])
 	if not aula_eliminada:
 		raise CodigoNoEncontrado(codigo_aula)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
