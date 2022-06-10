@@ -5,7 +5,7 @@ from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_reserva
 from institutoapi.bbdd.modelos import ReservaRequest, ReservaResponse, Profesor
 from institutoapi.excepciones.auth import PermisosInsuficientesError
-from institutoapi.excepciones.genericas import CodigoNoEncontrado, SinRegistros
+from institutoapi.excepciones.genericas import CodigoNoEncontrado
 from institutoapi.middleware.auth import validar_profesor_logeado
 
 
@@ -27,7 +27,7 @@ def get_todas_las_reservas(
 ):
 	reservas_encontradas = dao_reserva.seleccionar_todas(sesion_bbdd)
 	if not reservas_encontradas:
-		raise SinRegistros
+		return Response(status_code=status.HTTP_204_NO_CONTENT)
 	return reservas_encontradas
 
 

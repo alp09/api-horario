@@ -3,7 +3,7 @@ from fastapi import APIRouter, status, Depends, Response
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_horario
 from institutoapi.bbdd.modelos import HorarioRequest, HorarioResponse
-from institutoapi.excepciones.genericas import CodigoNoEncontrado, SinRegistros
+from institutoapi.excepciones.genericas import CodigoNoEncontrado
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
 
 
@@ -25,7 +25,7 @@ def get_todos_los_horarios(
 ):
 	horarios_encontrados = dao_horario.seleccionar_todos(sesion_bbdd)
 	if not horarios_encontrados:
-		raise SinRegistros
+		return Response(status_code=status.HTTP_204_NO_CONTENT)
 	return horarios_encontrados
 
 

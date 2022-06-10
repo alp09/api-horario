@@ -3,7 +3,7 @@ from fastapi import APIRouter, status, Depends, Response
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_profesor
 from institutoapi.bbdd.modelos import Profesor
-from institutoapi.excepciones.genericas import SinRegistros, CodigoNoEncontrado
+from institutoapi.excepciones.genericas import CodigoNoEncontrado
 from institutoapi.excepciones.profesor import EmailProfesorNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
 
@@ -26,7 +26,7 @@ def get_todos_los_profesores(
 ):
 	profesores_seleccionados = dao_profesor.seleccionar_todos(sesion_bbdd)
 	if not profesores_seleccionados:
-		raise SinRegistros
+		return Response(status_code=status.HTTP_204_NO_CONTENT)
 	return profesores_seleccionados
 
 

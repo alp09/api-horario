@@ -3,7 +3,7 @@ from fastapi import APIRouter, status, Depends, Response
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_aula
 from institutoapi.bbdd.modelos import Aula
-from institutoapi.excepciones.genericas import SinRegistros, CodigoNoEncontrado
+from institutoapi.excepciones.genericas import CodigoNoEncontrado
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
 
 
@@ -25,7 +25,7 @@ def get_todas_las_aulas(
 ):
 	aulas_encontradas = dao_aula.seleccionar_todas(sesion_bbdd)
 	if not aulas_encontradas:
-		raise SinRegistros
+		return Response(status_code=status.HTTP_204_NO_CONTENT)
 	return aulas_encontradas
 
 
