@@ -7,6 +7,7 @@ PyJWT==2.4.0
 psycopg2==2.9.3
 SQLAlchemy==1.4.35
 starlette==0.19.1
+itsdangerous=2.1.2
 google-auth-oauthlib==0.5.2
 google-api-python-client==2.50.0
 setuptools==62.3.3
