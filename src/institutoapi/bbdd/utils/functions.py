@@ -207,7 +207,7 @@ def generar_funciones_trigger():
 				-- Busca registros de ese día, hora y profesor en un aula distinta
 				SELECT horario_registrado.dia, horario_registrado.tramo, horario_registrado.profesor, horario_registrado.aula
 				INTO dia_registrado, tramo_registrado, profesor_registrado, aula_registrada
-				FROM get_clases_del_dia(p_dia => NEW.fecha, p_tramo => NEW.id_tramo, p_profesor => NEW.codigo_profesor) AS horario_registrado
+				FROM get_clases_del_dia(p_fecha => NEW.fecha, p_tramo => NEW.id_tramo, p_profesor => NEW.codigo_profesor) AS horario_registrado
 				WHERE horario_registrado.c_aula != NEW.codigo_aula
 				LIMIT 1;
 
@@ -250,7 +250,7 @@ def generar_funciones_trigger():
 				-- Busca registros de ese día, hora y aula en los que se esté dando una asignatura distinta
 				SELECT horario_registrado.dia, horario_registrado.tramo, horario_registrado.asignatura, horario_registrado.aula
 				INTO dia_registrado, tramo_registrado, asignatura_registrada, aula_registrada
-				FROM get_clases_del_dia(p_dia => NEW.fecha, p_tramo => NEW.id_tramo, p_aula => NEW.codigo_aula) AS horario_registrado
+				FROM get_clases_del_dia(p_fecha => NEW.fecha, p_tramo => NEW.id_tramo, p_aula => NEW.codigo_aula) AS horario_registrado
 				WHERE horario_registrado.c_asignatura != NEW.codigo_asignatura
 				LIMIT 1;
 
