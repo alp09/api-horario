@@ -32,7 +32,7 @@ app.include_router(router_grupo.router)
 app.include_router(router_horario.router)
 app.include_router(router_login.router)
 app.include_router(router_profesor.router)
-# app.include_router(router_reserva.router)
+app.include_router(router_reserva.router)
 
 
 @app.on_event("startup")
