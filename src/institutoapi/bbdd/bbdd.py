@@ -9,7 +9,7 @@ engine: Engine
 def inicializar_conexion():
 	""" Inicializa la base de datos. """
 
-	def generar_engine() -> Engine:
+	def generar_engine() -> None:
 		"""
 		Crea el objecto Engine que gestiona la conexión con la BBDD
 
@@ -17,16 +17,13 @@ def inicializar_conexion():
 		"""
 		from institutoapi.config import DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE
 
-		return create_engine(
+		global engine
+		engine = create_engine(
 			url=f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}",
-			pool_size=5,
-			max_overflow=10,
-			future=True
 		)
 
 	def crear_tablas_y_triggers() -> None:
 		""" Crea las modelos, funciones, triggers de la BBDD y datos iniciales """
-		import institutoapi.bbdd.modelos
 		from institutoapi.bbdd.utils import functions, triggers
 
 		# Prepara los listeners para que al crear las modelos se adjunten los triggers
@@ -41,8 +38,7 @@ def inicializar_conexion():
 		SQLModel.metadata.create_all(bind=engine)
 
 	# Genera el engine
-	global engine
-	engine = generar_engine()
+	generar_engine()
 
 	# Ejecuta el código necesario para generar lo relacionado con la BBDD
 	crear_tablas_y_triggers()
