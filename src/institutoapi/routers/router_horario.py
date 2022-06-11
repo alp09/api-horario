@@ -35,7 +35,7 @@ def get_todos_los_horarios(
 	path="/",
 	response_model=list[HorarioResponse],
 	status_code=status.HTTP_201_CREATED,
-	dependencies=[Depends(validar_profesor_logeado)],
+	dependencies=[Depends(validar_profesor_es_admin)],
 )
 def crear_horarios(
 	horarios_nuevos: list[HorarioRequest],
