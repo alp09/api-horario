@@ -27,13 +27,14 @@ Los pasos a seguir para implementar el login con Google son:
 
 """
 
-from fastapi import APIRouter, Request, Depends
+from fastapi import Request, Depends
 from fastapi.responses import RedirectResponse
 
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_profesor
 from institutoapi.excepciones.auth import UsuarioNoRegistradoError
 from institutoapi.servicios import servicio_login, servicio_jwt
+from institutoapi.utils import APIRouter
 
 
 # Definición del router

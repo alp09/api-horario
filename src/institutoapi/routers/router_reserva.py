@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends, Response
+from fastapi import status, Depends, Response
 from sqlmodel import Session
 
 from institutoapi.bbdd import get_sesion
@@ -7,12 +7,13 @@ from institutoapi.bbdd.modelos import ReservaRequest, ReservaResponse, Profesor
 from institutoapi.excepciones.auth import PermisosInsuficientesError
 from institutoapi.excepciones.genericas import CodigoNoEncontrado
 from institutoapi.middleware.auth import validar_profesor_logeado
+from institutoapi.utils import APIRouter
 
 
 # Definición del router
 router = APIRouter(
 	prefix="/reservas",
-	tags=["reservas"]
+	tags=["reservas"],
 )
 
 
@@ -20,7 +21,7 @@ router = APIRouter(
 	path="/",
 	response_model=list[ReservaResponse],
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)]
+	dependencies=[Depends(validar_profesor_logeado)],
 )
 def get_todas_las_reservas(
 	sesion_bbdd: Session = Depends(get_sesion)
@@ -35,7 +36,7 @@ def get_todas_las_reservas(
 	path="/{id_reserva}",
 	response_model=ReservaResponse,
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)]
+	dependencies=[Depends(validar_profesor_logeado)],
 )
 def get_reserva_por_id(
 	id_reserva: int,

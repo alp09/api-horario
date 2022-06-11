@@ -17,13 +17,6 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 # Añade los middleware
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
-app.add_middleware(
-	CORSMiddleware,
-	allow_origins=["http://localhost:3000"],
-	allow_credentials=True,
-	allow_methods=["GET", "POST", "PUT", "DELETE"],
-	allow_headers=["*"],
-)
 
 # Registro de routers
 app.include_router(router_asignatura.router)
