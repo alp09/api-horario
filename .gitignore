@@ -1,5 +1,6 @@
 # Ignores personalizados
-/src/institutoapi/config/archivos/
+/src/institutoapi/config/client_secret.json
+/src/institutoapi/config/settings.py
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template

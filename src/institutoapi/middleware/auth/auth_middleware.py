@@ -3,7 +3,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jwt import DecodeError, ExpiredSignatureError
 
-from institutoapi.config import SECRET_KEY, ALGORITMO
+from institutoapi.config import ApiConfig as Cfg
 from institutoapi.bbdd.modelos import Profesor
 from institutoapi.excepciones.auth import UsuarioNoLogeado, PermisosInsuficientesError, SesionCaducadaError
 
@@ -27,7 +27,7 @@ async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme)) -> P
 
 	# Intenta decodificar el token JWT
 	try:
-		payload = jwt.decode(jwt_token, SECRET_KEY, ALGORITMO)
+		payload = jwt.decode(jwt_token, Cfg.secret_key, Cfg.algoritmo)
 
 	# Si da un error, envía una Excepción personalizada
 	except DecodeError:

@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 
 from institutoapi.bbdd import bbdd
-from institutoapi.config import SECRET_KEY
+from institutoapi.config import ApiConfig as Cfg
 from institutoapi.routers import *
 
 
@@ -15,7 +15,7 @@ app = FastAPI()
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 # Añade los middleware
-app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+app.add_middleware(SessionMiddleware, secret_key=Cfg.secret_key)
 
 # Registro de routers
 app.include_router(router_asignatura.router)

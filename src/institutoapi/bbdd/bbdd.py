@@ -15,11 +15,11 @@ def inicializar_conexion():
 
 		:return: devuelve el objeto Engine
 		"""
-		from institutoapi.config import DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE
+		from institutoapi.config import ApiConfig as Cfg
 
 		global engine
 		engine = create_engine(
-			url=f"postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}",
+			url=f"postgresql+psycopg2://{Cfg.db_username}:{Cfg.db_password}@{Cfg.db_host}:{Cfg.db_port}/{Cfg.db_database}",
 		)
 
 	def crear_tablas_y_triggers() -> None:

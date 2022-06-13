@@ -1,7 +1,7 @@
 from google_auth_oauthlib.flow import Flow		# Google ofrece una librería que facilita el flujo OAuth
 from googleapiclient.discovery import build
 
-from institutoapi.config import BASE_URL, path_archivo_google
+from institutoapi.config import ApiConfig as Cfg
 
 
 # Los scopes son los distintos permisos que voy a solicitar
@@ -21,8 +21,8 @@ def get_url_login() -> str:
 
 	# Crea el objeto Flow con la configuración adecuada
 	cliente_api = Flow.from_client_secrets_file(
-		path_archivo_google,
-		redirect_uri=f"{BASE_URL}/login/callback",
+		Cfg.client_secret_file,
+		redirect_uri=f"{Cfg.base_url}/login/callback",
 		scopes=SCOPES
 	)
 
@@ -45,8 +45,8 @@ def get_datos_usuario(url_servidor_token: str, state: str) -> dict:
 
 	# Esta vez hay que añadirle el state a la configuración inicial para que lo valide
 	cliente_api = Flow.from_client_secrets_file(
-		path_archivo_google,
-		redirect_uri=f"{BASE_URL}/login/callback",
+		Cfg.client_secret_file,
+		redirect_uri=f"{Cfg.base_url}/login/callback",
 		scopes=SCOPES,
 		state=state
 	)
