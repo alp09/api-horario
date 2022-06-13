@@ -1,15 +1,37 @@
 import pytest
 from fastapi.testclient import TestClient
+from sqlmodel import SQLModel, create_engine, Session
+from sqlmodel.pool import StaticPool
 
 from institutoapi.main import app
+from institutoapi.bbdd.bbdd import get_sesion
 from institutoapi.bbdd.modelos import Profesor
 from institutoapi.middleware.auth import validar_profesor_logeado
 
 
+@pytest.fixture(name="db_engine", scope="session")
+def engine_base_de_datos():
+	engine = create_engine(url="sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+	SQLModel.metadata.create_all(bind=engine)
+	yield engine
+
+
 @pytest.fixture(scope="session")
-def cliente_no_autorizado():
+def sesion(db_engine):
+	with Session(bind=db_engine) as sesion:
+		yield sesion
+
+
+@pytest.fixture(scope="session")
+def cliente_no_autorizado(sesion):
+
+	def mock_sesion_db():
+		return sesion
+
 	with TestClient(app) as test_client:
+		app.dependency_overrides[get_sesion] = mock_sesion_db
 		yield test_client
+		app.dependency_overrides.pop(get_sesion)
 
 
 @pytest.fixture(params=[True, False], ids=["admin", "estandar"])
