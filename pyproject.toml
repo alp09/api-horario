@@ -50,6 +50,10 @@ legacy_tox_ini = """
 envlist = py310
 isolated_build = True
 
+[gh-actions]
+python =
+    3.10: py310
+
 [testenv]
 changedir =
 	tests
