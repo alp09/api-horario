@@ -13,7 +13,7 @@ def validar_horarios(
 	# Organiza los horarios por día y tramo
 	horarios_organizados = defaultdict(lambda: defaultdict(list))
 	for horario in horarios_guardados + horarios_nuevos:
-		if not excluir_id and not hasattr(horario, "id") and horario.id != excluir_id:
+		if not hasattr(horario, "id") or horario.id != excluir_id:
 			horarios_organizados[horario.id_dia][horario.id_tramo].append(horario)
 
 	# Por cada horario_nuevo, ejecuta las validaciones correspondientes con los horarios de su mismo día y tramo
@@ -31,7 +31,7 @@ def validar_reservas(
 	reservas_almacenadas,
 	horarios_almacenados,
 	*,
-	excluir_id: int
+	excluir_id: int = None
 ):
 
 	# Organiza los horarios por día y tramo
@@ -42,7 +42,7 @@ def validar_reservas(
 	# Organiza las reservas por fecha y tramo
 	reservas_organizadas = defaultdict(lambda: defaultdict(list))
 	for reserva in reservas_almacenadas + reservas_nuevas:
-		if not excluir_id and not hasattr(reserva, "id") and reserva.id != excluir_id:
+		if not hasattr(reserva, "id") or reserva.id != excluir_id:
 			reservas_organizadas[reserva.fecha][reserva.id_tramo].append(reserva)
 
 	# Por cada reserva_nueva, ejecuta las validaciones correspondientes con los horarios y reservas de la misma fecha y tramo
@@ -90,30 +90,30 @@ def _validar_profesor_no_esta_en_otro_aula(registro_nuevo, registro_para_validar
 		and registro_nuevo.codigo_aula != registro_para_validar.codigo_aula:
 
 		raise ProfesorImparteClasesEnOtraAula(
+			dia=dia,
+			tramo=registro_nuevo.id_tramo,
 			profesor=registro_nuevo.codigo_profesor,
 			aula_nueva=registro_nuevo.codigo_aula,
 			aula_vieja=registro_para_validar.codigo_aula,
-			dia=dia,
-			tramo=registro_nuevo.tramo
 		)
 
 
 def _validar_no_se_imparte_varias_asignaturas_en_mismo_aula(registro_nuevo, registro_para_validar, dia):
 	"""
-	Valida que el registro_nuevo no sea del mismo profesor en un aula distinta
+	Valida que el aula del nuevo_registro no se esté impartiendo varias asignaturas
 
 	:param registro_nuevo: el registro que se quiere guardar en la bbdd
 	:param registro_para_validar: un registro ya guardado en la bbdd o que se quiere guardar junto con el registro_nuevo
-	:raises ProfesorImparteClasesEnOtraAula: si el profesor ya tiene clases en otra aula en ese momento
+	:raises SeImparteAsignaturaDistinta: si ya se imparte una asignatura distinta a la indicada en registro_nuevo en el mismo aula
 	"""
 	if registro_nuevo.codigo_aula is not None \
 		and registro_nuevo.codigo_aula == registro_para_validar.codigo_aula \
 		and registro_nuevo.codigo_asignatura != registro_para_validar.codigo_asignatura:
 
 		raise SeImparteAsignaturaDistinta(
+			dia=dia,
+			tramo=registro_nuevo.id_tramo,
 			asignatura_nueva=registro_nuevo.codigo_asignatura,
 			asignatura_vieja=registro_para_validar.codigo_asignatura,
 			aula=registro_nuevo.codigo_aula,
-			dia=dia,
-			tramo=registro_nuevo.tramo
 		)

@@ -1,24 +1,8 @@
-from collections import defaultdict
 from sqlmodel import Session
 
 from institutoapi.bbdd.dao import dao_horario
 from institutoapi.bbdd.modelos import Horario, HorarioRequest
 from institutoapi.validaciones import validar_horarios
-
-
-def insertar(
-	sesion: Session,
-	horarios_nuevos: list[HorarioRequest],
-) -> list[Horario]:
-
-	# Valida los horarios insertados. En caso de error devuelve una excepción
-	horarios_registrados = dao_horario.seleccionar_todos(sesion)
-	validar_horarios(horarios_nuevos, horarios_registrados)
-
-	# Si no devuelve una excepción, los horarios son válidos y se insertan en la BBDD
-	horarios_procesados = [horario.dict() for horario in horarios_nuevos]
-	horarios_creados = dao_horario.insertar(sesion, horarios_procesados)
-	return horarios_creados
 
 
 def actualizar_por_codigo(

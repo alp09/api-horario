@@ -42,7 +42,8 @@ def crear_horarios(
 	horarios_nuevos: list[HorarioRequest],
 	sesion_bbdd: Session = Depends(get_sesion)
 ):
-	horarios_creados  = servicio_horario.insertar(sesion_bbdd, horarios_nuevos)
+	horarios_procesados = [horario.dict() for horario in horarios_nuevos]
+	horarios_creados 	= dao_horario.insertar(sesion_bbdd, horarios_procesados)
 	return horarios_creados
 
 
