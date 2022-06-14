@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError, InternalError
 from sqlmodel import Session, select, insert, update, delete
 
 from institutoapi.bbdd.modelos import Reserva
-from institutoapi.excepciones.bbdd import IntegridadError, DatosInvalidosError
+from institutoapi.excepciones.bbdd import IntegridadDatosError, DatosInvalidosError
 
 
 def seleccionar_todas(sesion: Session) -> list[Reserva]:
@@ -76,12 +76,12 @@ def insertar(sesion: Session, datos_reservas: list[dict]) -> list[Reserva]:
 	)
 
 	try:
-		with sesion.begin():
-			reservas_creadas = sesion.execute(orm_stmt).scalars().all()
-			return reservas_creadas
+		reservas_creadas = sesion.execute(orm_stmt).scalars().all()
+		sesion.commit()
+		return reservas_creadas
 
 	except IntegrityError as excepcion:
-		raise IntegridadError(excepcion.orig.pgerror)
+		raise IntegridadDatosError(excepcion.orig.pgerror)
 	except InternalError as excepcion:
 		raise DatosInvalidosError(excepcion.orig.pgerror)
 
@@ -109,12 +109,12 @@ def actualizar_por_id(sesion: Session, id_reserva: int, datos_reserva: dict) -> 
 	)
 
 	try:
-		with sesion.begin():
-			reservas_actualizadas = sesion.execute(orm_stmt).scalars().one_or_none()
-			return reservas_actualizadas
+		reservas_actualizadas = sesion.execute(orm_stmt).scalars().one_or_none()
+		sesion.commit()
+		return reservas_actualizadas
 
 	except IntegrityError as excepcion:
-		raise IntegridadError(excepcion.orig.pgerror)
+		raise IntegridadDatosError(excepcion.orig.pgerror)
 	except InternalError as excepcion:
 		raise DatosInvalidosError(excepcion.orig.pgerror)
 
@@ -133,6 +133,6 @@ def borrar(sesion: Session, id_reservas: list[int]) -> list[int]:
 		.returning(Reserva.id)
 	)
 
-	with sesion.begin():
-		reservas_eliminadas = sesion.execute(sql).scalars().all()
-		return reservas_eliminadas
+	reservas_eliminadas = sesion.execute(sql).scalars().all()
+	sesion.commit()
+	return reservas_eliminadas

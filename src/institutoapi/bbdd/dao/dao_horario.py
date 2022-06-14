@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError, InternalError
 from sqlmodel import Session, select, insert, update, delete
 
 from institutoapi.bbdd.modelos import Horario
-from institutoapi.excepciones.bbdd import IntegridadError, DatosInvalidosError
+from institutoapi.excepciones.bbdd import IntegridadDatosError, DatosInvalidosError
 
 
 def seleccionar_todos(sesion: Session) -> list[Horario]:
@@ -42,12 +42,12 @@ def insertar(sesion: Session, datos_horarios: list[dict]) -> list[Horario]:
 	)
 
 	try:
-		with sesion.begin():
-			horarios_insertados = sesion.exec(orm_stmt).scalars().all()
-			return horarios_insertados
+		horarios_insertados = sesion.execute(orm_stmt).scalars().all()
+		sesion.commit()
+		return horarios_insertados
 
 	except IntegrityError as excepcion:
-		raise IntegridadError(excepcion.orig.pgerror)
+		raise IntegridadDatosError(excepcion.orig.pgerror)
 	except InternalError as excepcion:
 		raise DatosInvalidosError(excepcion.orig.pgerror)
 
@@ -75,12 +75,12 @@ def actualizar_por_codigo(sesion: Session, id_horario: int, datos_horario: dict)
 	)
 
 	try:
-		with sesion.begin():
-			horario_actualizado = sesion.exec(orm_stmt).scalars().one_or_none()
-			return horario_actualizado
+		horario_actualizado = sesion.exec(orm_stmt).scalars().one_or_none()
+		sesion.commit()
+		return horario_actualizado
 
 	except IntegrityError as excepcion:
-		raise IntegridadError(excepcion.orig.pgerror)
+		raise IntegridadDatosError(excepcion.orig.pgerror)
 	except InternalError as excepcion:
 		raise DatosInvalidosError(excepcion.orig.pgerror)
 
@@ -99,6 +99,6 @@ def borrar(sesion: Session, id_horarios: list[int]) -> list[int]:
 		.returning(Horario.id)
 	)
 
-	with sesion.begin():
-		id_horarios_eliminados = sesion.exec(sql).scalars().all()
-		return id_horarios_eliminados
+	id_horarios_eliminados = sesion.exec(sql).scalars().all()
+	sesion.commit()
+	return id_horarios_eliminados

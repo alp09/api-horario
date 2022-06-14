@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select, insert, update, delete
 
 from institutoapi.bbdd.modelos import Asignatura
-from institutoapi.excepciones.bbdd import IntegridadError
+from institutoapi.excepciones.bbdd import IntegridadDatosError
 
 
 def seleccionar_todas(sesion: Session) -> list[Asignatura]:
@@ -54,12 +54,12 @@ def insertar(sesion: Session, asignatuas_nuevas: list[dict]) -> list[Asignatura]
 	orm_stmt = select(Asignatura).from_statement(sql)
 
 	try:
-		with sesion.begin():
-			asignaturas_insertadas = sesion.exec(orm_stmt).scalars().all()
-			return asignaturas_insertadas
+		asignaturas_insertadas = sesion.exec(orm_stmt).scalars().all()
+		sesion.commit()
+		return asignaturas_insertadas
 
 	except IntegrityError as excepcion:
-		raise IntegridadError(excepcion.orig.pgerror)
+		raise IntegridadDatosError(excepcion.orig.pgerror)
 
 
 def actualizar_por_codigo(sesion: Session, codigo_asignatura: str, datos_asignaturas: dict) -> Asignatura:
@@ -81,12 +81,12 @@ def actualizar_por_codigo(sesion: Session, codigo_asignatura: str, datos_asignat
 	orm_stmt = select(Asignatura).from_statement(sql)
 
 	try:
-		with sesion.begin():
-			asignatura_actualizada = sesion.exec(orm_stmt).scalars().one_or_none()
-			return asignatura_actualizada
+		asignatura_actualizada = sesion.exec(orm_stmt).scalars().one_or_none()
+		sesion.commit()
+		return asignatura_actualizada
 
 	except IntegrityError as excepcion:
-		raise IntegridadError(excepcion.orig.pgerror)
+		raise IntegridadDatosError(excepcion.orig.pgerror)
 
 
 def borrar(sesion: Session, codigos_asignaturas: list[str]) -> list[str]:
@@ -103,6 +103,6 @@ def borrar(sesion: Session, codigos_asignaturas: list[str]) -> list[str]:
 		.returning(Asignatura.codigo)
 	)
 
-	with sesion.begin():
-		asignaturas_borradas = sesion.exec(sql).scalars().all()
-		return asignaturas_borradas
+	asignaturas_borradas = sesion.exec(sql).scalars().all()
+	sesion.commit()
+	return asignaturas_borradas
