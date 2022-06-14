@@ -4,7 +4,7 @@ from sqlmodel import Session
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_grupo
 from institutoapi.bbdd.modelos import Grupo
-from institutoapi.excepciones.genericas import CodigoNoEncontrado
+from institutoapi.excepciones.genericas import CodigoNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
 from institutoapi.utils import APIRouter
 
@@ -43,7 +43,7 @@ def get_grupo_por_codigo(
 ):
 	grupo_seleccionado = dao_grupo.seleccionar_por_codigo(sesion_bbdd, codigo_grupo)
 	if not grupo_seleccionado:
-		raise CodigoNoEncontrado(codigo_grupo)
+		raise CodigoNoEncontradoError(codigo_grupo)
 	return grupo_seleccionado
 
 
@@ -75,7 +75,7 @@ def actualizar_grupo_por_codigo(
 ):
 	grupo_actualizado = dao_grupo.actualizar_por_codigo(sesion_bbdd, codigo_grupo, grupo_editado.dict())
 	if not grupo_actualizado:
-		raise CodigoNoEncontrado(codigo_grupo)
+		raise CodigoNoEncontradoError(codigo_grupo)
 	return grupo_actualizado
 
 
@@ -90,7 +90,7 @@ def borrar_grupos(
 ):
 	grupos_eliminados = dao_grupo.borrar(sesion_bbdd, codigos_grupos)
 	if not grupos_eliminados:
-		raise CodigoNoEncontrado(codigos_grupos)
+		raise CodigoNoEncontradoError(codigos_grupos)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -105,5 +105,5 @@ def borrar_grupo_por_codigo(
 ):
 	grupo_eliminado = dao_grupo.borrar(sesion_bbdd, [codigo_grupo])
 	if not grupo_eliminado:
-		raise CodigoNoEncontrado(codigo_grupo)
+		raise CodigoNoEncontradoError(codigo_grupo)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -4,8 +4,8 @@ from sqlmodel import Session
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_profesor
 from institutoapi.bbdd.modelos import Profesor
-from institutoapi.excepciones.genericas import CodigoNoEncontrado
-from institutoapi.excepciones.profesor import EmailProfesorNoEncontradoError
+from institutoapi.excepciones.genericas import CodigoNoEncontradoError
+from institutoapi.excepciones.profesor import EmailNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
 from institutoapi.utils import APIRouter
 
@@ -44,7 +44,7 @@ def get_profesor_por_codigo(
 ):
 	profesor_seleccionado = dao_profesor.seleccionar_por_codigo(sesion_bbdd, codigo_profesor)
 	if not profesor_seleccionado:
-		raise CodigoNoEncontrado(codigo_profesor)
+		raise CodigoNoEncontradoError(codigo_profesor)
 	return profesor_seleccionado
 
 
@@ -60,7 +60,7 @@ def get_profesor_por_email(
 ):
 	profesor_seleccionado = dao_profesor.seleccionar_por_email(sesion_bbdd, email_profesor)
 	if not profesor_seleccionado:
-		raise EmailProfesorNoEncontradoError(email_profesor)
+		raise EmailNoEncontradoError(email_profesor)
 	return profesor_seleccionado
 
 
@@ -92,7 +92,7 @@ def actualizar_profesor_por_codigo(
 ):
 	profesor_actualizado = dao_profesor.actualizar_por_codigo(sesion_bbdd, codigo_profesor, profesor_editado.dict())
 	if not profesor_actualizado:
-		raise CodigoNoEncontrado(codigo_profesor)
+		raise CodigoNoEncontradoError(codigo_profesor)
 	return profesor_actualizado
 
 
@@ -107,7 +107,7 @@ def borrar_profesores(
 ):
 	profesores_eliminados = dao_profesor.borrar(sesion_bbdd, codigos_profesores)
 	if not profesores_eliminados:
-		raise CodigoNoEncontrado(codigos_profesores)
+		raise CodigoNoEncontradoError(codigos_profesores)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -122,5 +122,5 @@ def borrar_profesor_por_codigo(
 ):
 	profesor_eliminado = dao_profesor.borrar(sesion_bbdd, [codigo_profesor])
 	if not profesor_eliminado:
-		raise CodigoNoEncontrado(codigo_profesor)
+		raise CodigoNoEncontradoError(codigo_profesor)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)

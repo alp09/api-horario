@@ -4,7 +4,7 @@ from sqlmodel import Session
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_aula
 from institutoapi.bbdd.modelos import Aula
-from institutoapi.excepciones.genericas import CodigoNoEncontrado
+from institutoapi.excepciones.genericas import CodigoNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
 from institutoapi.utils import APIRouter
 
@@ -43,7 +43,7 @@ def get_aula_por_codigo(
 ):
 	aula_encontrada = dao_aula.seleccionar_por_codigo(sesion_bbdd, codigo_aula)
 	if not aula_encontrada:
-		raise CodigoNoEncontrado(codigo_aula)
+		raise CodigoNoEncontradoError(codigo_aula)
 	return aula_encontrada
 
 
@@ -75,7 +75,7 @@ def actualizar_aula_por_codigo(
 ):
 	aula_actualizada = dao_aula.actualizar_por_codigo(sesion_bbdd, codigo_aula, aula_editada.dict())
 	if not aula_actualizada:
-		raise CodigoNoEncontrado(codigo_aula)
+		raise CodigoNoEncontradoError(codigo_aula)
 	return aula_actualizada
 
 
@@ -90,7 +90,7 @@ def borrar_aulas(
 ):
 	asignatuas_eliminadas = dao_aula.borrar(sesion_bbdd, codigos_aulas)
 	if not asignatuas_eliminadas:
-		raise CodigoNoEncontrado(codigos_aulas)
+		raise CodigoNoEncontradoError(codigos_aulas)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -105,5 +105,5 @@ def borrar_aula_por_codigo(
 ):
 	aula_eliminada = dao_aula.borrar(sesion_bbdd, [codigo_aula])
 	if not aula_eliminada:
-		raise CodigoNoEncontrado(codigo_aula)
+		raise CodigoNoEncontradoError(codigo_aula)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)

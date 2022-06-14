@@ -1,1 +1,4 @@
-from .excepciones_horario import ProfesorImparteClasesEnOtraAula, SeImparteAsignaturaDistinta
+from institutoapi.excepciones.horario.excepciones_horario import (
+	ProfesorImparteClasesEnOtraAula,
+	SeImparteAsignaturaDistinta
+)

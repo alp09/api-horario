@@ -1,4 +1,4 @@
 from .excepciones_bbdd import (
-	IntegridadError,
+	IntegridadDatosError,
 	DatosInvalidosError
 )

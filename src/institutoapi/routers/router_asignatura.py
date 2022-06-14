@@ -4,7 +4,7 @@ from sqlmodel import Session
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_asignatura
 from institutoapi.bbdd.modelos import Asignatura
-from institutoapi.excepciones.genericas import CodigoNoEncontrado
+from institutoapi.excepciones.genericas import CodigoNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
 from institutoapi.utils import APIRouter
 
@@ -43,7 +43,7 @@ def get_asignatura_por_codigo(
 ):
 	asignatura_encontrada = dao_asignatura.seleccionar_por_codigo(sesion_bbdd, codigo_asignatura)
 	if not asignatura_encontrada:
-		raise CodigoNoEncontrado(codigo_asignatura)
+		raise CodigoNoEncontradoError(codigo_asignatura)
 	return asignatura_encontrada
 
 
@@ -75,7 +75,7 @@ def actualizar_asignatura_por_codigo(
 ):
 	asignatura_actualizada = dao_asignatura.actualizar_por_codigo(sesion_bbdd, codigo_asignatura, asignatura_editada.dict())
 	if not asignatura_actualizada:
-		raise CodigoNoEncontrado(codigo_asignatura)
+		raise CodigoNoEncontradoError(codigo_asignatura)
 	return asignatura_actualizada
 
 
@@ -90,7 +90,7 @@ def borrar_asignatuas(
 ):
 	asignaturas_eliminadas = dao_asignatura.borrar(sesion_bbdd, codigos_asignaturas)
 	if not asignaturas_eliminadas:
-		raise CodigoNoEncontrado(codigos_asignaturas)
+		raise CodigoNoEncontradoError(codigos_asignaturas)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -105,5 +105,5 @@ def borrar_asignatua_por_codigo(
 ):
 	asignatura_eliminada = dao_asignatura.borrar(sesion_bbdd, [codigo_asignatura])
 	if not asignatura_eliminada:
-		raise CodigoNoEncontrado(codigo_asignatura)
+		raise CodigoNoEncontradoError(codigo_asignatura)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
