@@ -1,8 +1,7 @@
-from fastapi import HTTPException
-from starlette import status
+from fastapi import HTTPException, status
 
 
-class EmailProfesorNoEncontradoError(HTTPException):
+class EmailNoEncontradoError(HTTPException):
 
 	def __init__(self, email_profesor: str):
 		self.status_code = status.HTTP_404_NOT_FOUND

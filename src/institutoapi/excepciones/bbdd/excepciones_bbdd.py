@@ -1,5 +1,4 @@
-from fastapi import HTTPException
-from starlette import status
+from fastapi import HTTPException, status
 
 
 class DatosInvalidosError(HTTPException):
@@ -9,7 +8,7 @@ class DatosInvalidosError(HTTPException):
 		self.detail = mensaje.split("\n")[0]
 
 
-class IntegridadError(HTTPException):
+class IntegridadDatosError(HTTPException):
 
 	def __init__(self, mensaje: str):
 		self.status_code = status.HTTP_409_CONFLICT
