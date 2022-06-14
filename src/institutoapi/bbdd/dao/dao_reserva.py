@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy.exc import IntegrityError, InternalError
 from sqlmodel import Session, select, insert, update, delete
 
@@ -40,7 +41,7 @@ def seleccionar_por_lista_id(sesion: Session, id_reservas: list[int]) -> list[Re
 
 def seleccionar_por_id(sesion: Session, id_reserva: int) -> Reserva | None:
 	"""
-	Selecciona el reserva cuyo código sea igual a codigo_aula
+	Selecciona la reserva cuyo código sea igual a codigo_aula
 
 	:param sesion: la sesión de bbdd con la que se va a realizar la operación
 	:param id_reserva: el ID de la reserva que se busca
@@ -57,7 +58,7 @@ def seleccionar_por_id(sesion: Session, id_reserva: int) -> Reserva | None:
 
 def insertar(sesion: Session, datos_reservas: list[dict]) -> list[Reserva]:
 	"""
-	Inserta un registro en la tabla de Aula por cada diccionario de datos
+	Inserta un registro en la tabla de Reserva por cada diccionario de datos
 
 	:param sesion: la sesión de bbdd con la que se va a realizar la operación
 	:param datos_reservas: los datos de las reservas que se van a insertar
