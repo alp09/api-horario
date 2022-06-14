@@ -1,59 +1,36 @@
 from sqlmodel import create_engine, SQLModel, Session
 from sqlalchemy.future import Engine
 
-
-# Variable que contiene el Engine de SQLAlchemy
-engine: Engine
+from institutoapi.bbdd.utils import triggers
 
 
-def inicializar_conexion():
+_engine: Engine
+
+
+def inicializar_conexion(*, username, password, host, port, database, **kwargs) -> None:
 	""" Inicializa la base de datos. """
 
-	def generar_engine() -> None:
-		"""
-		Crea el objecto Engine que gestiona la conexión con la BBDD
-
-		:return: devuelve el objeto Engine
-		"""
-		from institutoapi.config import ApiConfig as Cfg
-
-		global engine
-		engine = create_engine(
-			url=f"postgresql+psycopg2://{Cfg.db_username}:{Cfg.db_password}@{Cfg.db_host}:{Cfg.db_port}/{Cfg.db_database}",
-		)
-
-	def crear_tablas_y_triggers() -> None:
-		""" Crea las modelos, funciones, triggers de la BBDD y datos iniciales """
-		from institutoapi.bbdd.utils import functions, triggers
-
-		# Prepara los listeners para que al crear las modelos se adjunten los triggers
-		functions.generar_funciones()
-		functions.generar_funciones_trigger()
-		triggers.generar_triggers()
-
-		# Prepara los listener para rellenar los datos de la tabla dia_semana y tramo_horario
-		triggers.generar_datos_tablas()
-
-		# Genera las modelos de la BBDD si no existen
-		SQLModel.metadata.create_all(bind=engine)
-
 	# Genera el engine
-	generar_engine()
+	global _engine
+	_engine = create_engine(url=f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}", **kwargs)
 
-	# Ejecuta el código necesario para generar lo relacionado con la BBDD
-	crear_tablas_y_triggers()
+	# Prepara los listener para rellenar los datos de la tabla dia_semana y tramo_horario
+	triggers.generar_datos_tablas()
+
+	# Genera las modelos de la BBDD si no existen
+	SQLModel.metadata.create_all(bind=_engine)
 
 
-def cerrar_conexion():
-	""" Cierra la conexión con la base de datos. """
-	engine.dispose()
+def finalizar_conexion():
+	""" Una vez se deja de usar el engine, se elimina """
+	_engine.dispose()
 
 
-def get_sesion() -> Session:
-	""" Devuelve una sesión que controla la persistencia de objectos ORM """
-	if engine is not None:
-		sesion = Session(bind=engine)
-		try:
+def get_sesion() -> Session | None:
+	"""
+	Genera un objeto Session. Una vez se deja de usar, se ‘cierra’ la Session y se devuelve al Pool de conexión
+	A diferencia de una Connection, estás permiten trabajar con objetos ORM (y otras muchas cosas...)
+	"""
+	if _engine is not None:
+		with Session(bind=_engine) as sesion:
 			yield sesion
-		finally:
-			sesion.close()
