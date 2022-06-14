@@ -4,8 +4,9 @@ from sqlmodel import Session
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_horario
 from institutoapi.bbdd.modelos import HorarioRequest, HorarioResponse
-from institutoapi.excepciones.genericas import CodigoNoEncontrado
+from institutoapi.excepciones.genericas import CodigoNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
+from institutoapi.servicios import servicio_horario
 from institutoapi.utils import APIRouter
 
 
@@ -41,8 +42,7 @@ def crear_horarios(
 	horarios_nuevos: list[HorarioRequest],
 	sesion_bbdd: Session = Depends(get_sesion)
 ):
-	horarios_procesados = [horario.dict() for horario in horarios_nuevos]
-	horarios_creados = dao_horario.insertar(sesion_bbdd, horarios_procesados)
+	horarios_creados  = servicio_horario.insertar(sesion_bbdd, horarios_nuevos)
 	return horarios_creados
 
 
@@ -57,9 +57,9 @@ def actualizar_horario_por_id(
 	horario_editado: HorarioRequest,
 	sesion_bbdd: Session = Depends(get_sesion)
 ):
-	horario_actualizado = dao_horario.actualizar_por_codigo(sesion_bbdd, id_horario, horario_editado.dict())
+	horario_actualizado = servicio_horario.actualizar_por_codigo(sesion_bbdd, id_horario, horario_editado)
 	if not horario_actualizado:
-		raise CodigoNoEncontrado(id_horario)
+		raise CodigoNoEncontradoError(id_horario)
 	return horario_actualizado
 
 
@@ -74,7 +74,7 @@ def borrar_horarios(
 ):
 	horarios_eliminados = dao_horario.borrar(sesion_bbdd, id_horarios)
 	if not horarios_eliminados:
-		raise CodigoNoEncontrado(id_horarios)
+		raise CodigoNoEncontradoError(id_horarios)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -89,5 +89,5 @@ def borrar_horario_por_id(
 ):
 	horario_eliminado = dao_horario.borrar(sesion_bbdd, [id_horario])
 	if not horario_eliminado:
-		raise CodigoNoEncontrado(id_horario)
+		raise CodigoNoEncontradoError(id_horario)
 	return Response(status_code=status.HTTP_204_NO_CONTENT)

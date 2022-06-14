@@ -5,8 +5,9 @@ from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_reserva
 from institutoapi.bbdd.modelos import ReservaRequest, ReservaResponse, Profesor
 from institutoapi.excepciones.auth import PermisosInsuficientesError
-from institutoapi.excepciones.genericas import CodigoNoEncontrado
+from institutoapi.excepciones.genericas import CodigoNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado
+from institutoapi.servicios import servicio_reserva
 from institutoapi.utils import APIRouter
 
 
@@ -44,7 +45,7 @@ def get_reserva_por_id(
 ):
 	reserva_encontrada = dao_reserva.seleccionar_por_id(sesion_bbdd, id_reserva)
 	if not reserva_encontrada:
-		raise CodigoNoEncontrado(id_reserva)
+		raise CodigoNoEncontradoError(id_reserva)
 	return reserva_encontrada
 
 
@@ -64,8 +65,7 @@ def crear_reservas(
 		raise PermisosInsuficientesError
 
 	# Si no hay errores, crea las reservas
-	reservas_procesadas = [reserva.dict() for reserva in reservas_nuevas]
-	reservas_creadas = dao_reserva.insertar(sesion_bbdd, reservas_procesadas)
+	reservas_creadas = servicio_reserva.insertar(sesion_bbdd, reservas_nuevas)
 	return reservas_creadas
 
 
@@ -83,16 +83,16 @@ def actualizar_reserva_por_id(
 	# Recoge la reserva que se quiere actualizar
 	reserva_encontrada = dao_reserva.seleccionar_por_id(sesion_bbdd, id_reserva)
 
-	# Si la reserva no existe, devuelve un error CodigoNoEncontrado
+	# Si la reserva no existe, devuelve un error CodigoNoEncontradoError
 	if not reserva_encontrada:
-		raise CodigoNoEncontrado(id_reserva)
+		raise CodigoNoEncontradoError(id_reserva)
 
 	# Comprueba que el profesor que intenta modificar la reserva sea administrador o el profesor que hizo la reserva
 	if not validar_profesor_tiene_permiso(profesor_logeado, [reserva_encontrada]):
 		raise PermisosInsuficientesError
 
 	# Si tiene permisos para actualizar la reserva, continua con la operación
-	reserva_actualizada = dao_reserva.actualizar_por_id(sesion_bbdd, id_reserva, reserva_editada.dict())
+	reserva_actualizada = servicio_reserva.actualizar_por_codigo(sesion_bbdd, id_reserva, reserva_editada)
 	return reserva_actualizada
 
 
@@ -110,7 +110,7 @@ def borrar_reservas(
 
 	# Si no encuentra ninguna, devuelve un error
 	if not reservas_encontradas:
-		raise CodigoNoEncontrado(id_reservas)
+		raise CodigoNoEncontradoError(id_reservas)
 
 	# Comprueba que el profesor que intenta borrar la reservas sea administrador o el profesor que hizo la reserva
 	if not validar_profesor_tiene_permiso(profesor_logeado, reservas_encontradas):
@@ -133,9 +133,9 @@ def borrar_reserva_por_id(
 	# Recoge la reserva que se quiere borrar
 	reserva_encontrada = dao_reserva.seleccionar_por_id(sesion_bbdd, id_reserva)
 
-	# Si la reserva no existe, devuelve un error CodigoNoEncontrado
+	# Si la reserva no existe, devuelve un error CodigoNoEncontradoError
 	if not reserva_encontrada:
-		raise CodigoNoEncontrado(id_reserva)
+		raise CodigoNoEncontradoError(id_reserva)
 
 	# Comprueba que el profesor que intenta borrar la reserva sea administrador o el profesor que hizo la reserva
 	if not validar_profesor_tiene_permiso(profesor_logeado, [reserva_encontrada]):
