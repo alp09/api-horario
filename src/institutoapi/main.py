@@ -27,17 +27,23 @@ app.include_router(router_profesor.router)
 app.include_router(router_reserva.router)
 
 
-@app.on_event("startup")
-def startup():
-	# Inicializa la base de datos
-	bbdd.inicializar_conexion()
-
-
-@app.on_event("shutdown")
-def shutdown():
-	# Cierra la base de datos
-	bbdd.cerrar_conexion()
-
-
 if __name__ == "__main__":
+
+	@app.on_event("startup")
+	def startup():
+		# Inicializa la base de datos
+		bbdd.inicializar_conexion(
+			username=Cfg.db_username,
+			password=Cfg.db_password,
+			host=Cfg.db_host,
+			port=Cfg.db_port,
+			database=Cfg.db_database,
+			echo=True,
+		)
+
+	@app.on_event("shutdown")
+	def shutdown():
+		# Cierra la base de datos
+		bbdd.finalizar_conexion()
+
 	uvicorn.run(app, host="127.0.0.1", port=8000)
