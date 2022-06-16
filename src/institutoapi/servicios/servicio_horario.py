@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
 from institutoapi.bbdd.dao import dao_horario
-from institutoapi.bbdd.modelos import Horario, HorarioRequest
+from institutoapi.modelos import Horario, HorarioRequest
 from institutoapi.validaciones import validar_horarios
 
 

@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select, insert, update, delete
 
-from institutoapi.bbdd.modelos import Aula
+from institutoapi.modelos import Aula
 from institutoapi.excepciones.bbdd import IntegridadDatosError
 
 

@@ -1,3 +1,6 @@
+from .modelo_auth import Token
+
+# Tablas de la BBDD
 from .modelo_asignatura import Asignatura
 from .modelo_aula import Aula
 from .modelo_dia_semana import DiaSemana

@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
 from institutoapi.bbdd.dao import dao_horario, dao_reserva
-from institutoapi.bbdd.modelos import Reserva, ReservaRequest
+from institutoapi.modelos import Reserva, ReservaRequest
 from institutoapi.validaciones import validar_reservas
 
 

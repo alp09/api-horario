@@ -5,7 +5,7 @@ from sqlmodel.pool import StaticPool
 
 from institutoapi.main import app
 from institutoapi.bbdd.bbdd import get_sesion
-from institutoapi.bbdd.modelos import Profesor
+from institutoapi.modelos import Profesor
 from institutoapi.middleware.auth import validar_profesor_logeado
 
 

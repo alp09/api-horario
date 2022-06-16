@@ -3,7 +3,7 @@ from sqlmodel import Session
 
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_profesor
-from institutoapi.bbdd.modelos import Profesor
+from institutoapi.modelos import Profesor
 from institutoapi.excepciones.genericas import CodigoNoEncontradoError
 from institutoapi.excepciones.profesor import EmailNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin

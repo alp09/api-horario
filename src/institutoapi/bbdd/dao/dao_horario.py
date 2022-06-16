@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError, InternalError
 from sqlmodel import Session, select, insert, update, delete
 
-from institutoapi.bbdd.modelos import Horario
+from institutoapi.modelos import Horario
 from institutoapi.excepciones.bbdd import IntegridadDatosError, DatosInvalidosError
 
 

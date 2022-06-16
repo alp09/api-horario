@@ -1,6 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 
-from institutoapi.bbdd.modelos import DiaSemana, TramoHorario, Asignatura, Profesor, Aula, Grupo
+from institutoapi.modelos import DiaSemana, TramoHorario, Asignatura, Profesor, Aula, Grupo
 
 
 class HorarioRequest(SQLModel):

@@ -1,18 +1,19 @@
 from sqlmodel import create_engine, SQLModel, Session
 from sqlalchemy.future import Engine
 
+import institutoapi.modelos
 from institutoapi.bbdd.utils import triggers
 
 
 _engine: Engine
 
 
-def inicializar_conexion(*, username, password, host, port, database, **kwargs) -> None:
+def inicializar_conexion(*, url, **kwargs) -> None:
 	""" Inicializa la base de datos. """
 
 	# Genera el engine
 	global _engine
-	_engine = create_engine(url=f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}", **kwargs)
+	_engine = create_engine(url=url, **kwargs)
 
 	# Prepara los listener para rellenar los datos de la tabla dia_semana y tramo_horario
 	triggers.generar_datos_tablas()

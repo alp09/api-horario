@@ -1,17 +1,18 @@
-import jwt
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-from jwt import DecodeError, ExpiredSignatureError
+from sqlmodel import Session
 
-from institutoapi.config import ApiConfig as Cfg
-from institutoapi.bbdd.modelos import Profesor
-from institutoapi.excepciones.auth import UsuarioNoLogeado, PermisosInsuficientesError, SesionCaducadaError
+from institutoapi.bbdd import get_sesion
+from institutoapi.modelos import Profesor
+from institutoapi.bbdd.dao import dao_profesor
+from institutoapi.excepciones.auth import PermisosInsuficientesError, UsuarioNoLogeado
+from institutoapi.servicios import servicio_jwt
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme)) -> Profesor:
+async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme), sesion: Session = Depends(get_sesion)) -> Profesor:
 	"""
 	La dependencia de oauth2_scheme comprueba que en HEADER de la petición HTTP se encuentre
 	un token en la clave Authorization. De ser así lo asigna al parámetro jwt_token.
@@ -20,22 +21,20 @@ async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme)) -> P
 	la misma clave secreta y algoritmo. Una vez decodificado, revisa que no esté caducado.
 
 	:param jwt_token: el token JWT que se va a validar
-	:raises UsuarioNoLogeado: si ocurre algún error durante la decodificación del token
-	:raises SesionCaducadaError: si el token ha caducado
+	:param sesion: la sesión con la que se va a hacer la consulta a la BBDD
 	:return: los datos del profesor que ha iniciado sesión
 	"""
+	payload = servicio_jwt.decodificar_jwt_token(jwt_token)
 
-	# Intenta decodificar el token JWT
-	try:
-		payload = jwt.decode(jwt_token, Cfg.secret_key, Cfg.algoritmo)
-
-	# Si da un error, envía una Excepción personalizada
-	except DecodeError:
+	codigo_profesor = payload.get("sub", None)
+	if codigo_profesor is None:
 		raise UsuarioNoLogeado
-	except ExpiredSignatureError:
-		raise SesionCaducadaError
 
-	return Profesor(**payload)
+	profesor_logeado = dao_profesor.seleccionar_por_codigo(sesion, codigo_profesor)
+	if profesor_logeado is None:
+		raise UsuarioNoLogeado
+
+	return profesor_logeado
 
 
 async def validar_profesor_es_admin(profesor_logeado: Profesor = Depends(validar_profesor_logeado)) -> Profesor:

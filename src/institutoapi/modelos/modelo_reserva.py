@@ -3,7 +3,7 @@ from datetime import date
 from pydantic import validator
 from sqlmodel import SQLModel, Field, Relationship
 
-from institutoapi.bbdd.modelos import TramoHorario, Asignatura, Profesor, Aula, Grupo
+from institutoapi.modelos import TramoHorario, Asignatura, Profesor, Aula, Grupo
 
 
 class ReservaRequest(SQLModel):

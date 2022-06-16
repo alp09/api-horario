@@ -3,7 +3,7 @@ from sqlmodel import Session
 
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_reserva
-from institutoapi.bbdd.modelos import ReservaRequest, ReservaResponse, Profesor
+from institutoapi.modelos import ReservaRequest, ReservaResponse, Profesor
 from institutoapi.excepciones.auth import PermisosInsuficientesError
 from institutoapi.excepciones.genericas import CodigoNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado

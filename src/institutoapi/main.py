@@ -32,18 +32,11 @@ if __name__ == "__main__":
 	@app.on_event("startup")
 	def startup():
 		# Inicializa la base de datos
-		bbdd.inicializar_conexion(
-			username=Cfg.db_username,
-			password=Cfg.db_password,
-			host=Cfg.db_host,
-			port=Cfg.db_port,
-			database=Cfg.db_database,
-			echo=True,
-		)
+		bbdd.inicializar_conexion(url=Cfg.db_url)
 
 	@app.on_event("shutdown")
 	def shutdown():
 		# Cierra la base de datos
 		bbdd.finalizar_conexion()
 
-	uvicorn.run(app, host="127.0.0.1", port=8000)
+	uvicorn.run(app, host=Cfg.api_host, port=Cfg.api_port)

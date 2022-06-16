@@ -32,7 +32,9 @@ from fastapi.responses import RedirectResponse
 
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_profesor
+from institutoapi.config import ApiConfig as Cfg
 from institutoapi.excepciones.auth import UsuarioNoRegistradoError
+from institutoapi.modelos import Token
 from institutoapi.servicios import servicio_login, servicio_jwt
 from institutoapi.utils import APIRouter
 
@@ -54,7 +56,7 @@ def login(request: Request) -> RedirectResponse:
 	return RedirectResponse(url_login)
 
 
-@router.get(path="/login/callback")
+@router.get(path=Cfg.google_login_callback, response_model=Token)
 def login_callback(request: Request, sesion_bbdd=Depends(get_sesion)) -> dict:
 
 	# Recoge las variables necesarias para el objeto Flow
@@ -73,5 +75,5 @@ def login_callback(request: Request, sesion_bbdd=Depends(get_sesion)) -> dict:
 		raise UsuarioNoRegistradoError(email=email_usuario)
 
 	# Si lo está genera el JWT token con los datos del usuario registrado
-	jwt_token = servicio_jwt.generar_jwt_token(profesor.dict())
-	return {"access_token": jwt_token}
+	jwt_token = servicio_jwt.generar_jwt_token(profesor)
+	return {"access_token": jwt_token, "token_type": "bearer"}

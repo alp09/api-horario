@@ -12,7 +12,8 @@ class UsuarioNoLogeado(HTTPException):
 
 	def __init__(self):
 		self.status_code = status.HTTP_401_UNAUTHORIZED
-		self.detail  = "Es necesario estar logeado para acceder al sitio"
+		self.detail  = "Es necesario iniciar sesión para acceder al sitio"
+		self.headers = {"WWW-Authenticate": "Bearer"}
 
 
 class SesionCaducadaError(HTTPException):
@@ -20,10 +21,11 @@ class SesionCaducadaError(HTTPException):
 	def __init__(self):
 		self.status_code = 419 	# Login timeout - No es estándar
 		self.detail  = "La sesión ha caducado"
+		self.headers = {"WWW-Authenticate": "Bearer"}
 
 
 class PermisosInsuficientesError(HTTPException):
 
-	def __init__(self, mensaje=None):
+	def __init__(self):
 		self.status_code = status.HTTP_403_FORBIDDEN
-		self.detail = mensaje or f"Se requiren permisos de administrador para realizar esa acción"
+		self.detail = "Se requiren permisos de administrador para realizar esa acción"
