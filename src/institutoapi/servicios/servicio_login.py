@@ -22,7 +22,7 @@ def get_url_login() -> str:
 	# Crea el objeto Flow con la configuración adecuada
 	cliente_api = Flow.from_client_secrets_file(
 		Cfg.client_secret_file,
-		redirect_uri=f"{Cfg.api_base_url}{Cfg.google_login_callback}",
+		redirect_uri=f"{Cfg.api_url}{Cfg.google_login_callback}",
 		scopes=SCOPES
 	)
 
@@ -46,7 +46,7 @@ def get_datos_usuario(url_servidor_token: str, state: str) -> dict:
 	# Esta vez hay que añadirle el state a la configuración inicial para que lo valide
 	cliente_api = Flow.from_client_secrets_file(
 		Cfg.client_secret_file,
-		redirect_uri=f"{Cfg.api_base_url}{Cfg.google_login_callback}",
+		redirect_uri=f"{Cfg.api_url}{Cfg.google_login_callback}",
 		scopes=SCOPES,
 		state=state
 	)

@@ -1,6 +1,7 @@
 import os
 import uvicorn
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from institutoapi.bbdd import bbdd
@@ -16,6 +17,13 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 # Añade los middleware
 app.add_middleware(SessionMiddleware, secret_key=Cfg.secret_key)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=Cfg.origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Registro de routers
 app.include_router(router_asignatura.router)
