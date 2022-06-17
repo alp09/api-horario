@@ -4,7 +4,7 @@ from sqlmodel import Session
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_asignatura
 from institutoapi.excepciones.genericas import CodigoNoEncontradoError
-from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
+from institutoapi.middleware import auth_middleware as auth
 from institutoapi.modelos import Asignatura
 from institutoapi.respuestas import responses
 from institutoapi.utils import APIRouter
@@ -24,7 +24,7 @@ router = APIRouter(
 	path="/",
 	response_model=list[Asignatura],
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)],
+	dependencies=[Depends(auth.validar_profesor_logeado)],
 	responses={
 		**responses.sin_registros,
 	},
@@ -42,7 +42,7 @@ def get_todas_las_asignaturas(
 	path="/{codigo_asignatura}",
 	response_model=Asignatura,
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)],
+	dependencies=[Depends(auth.validar_profesor_logeado)],
 	responses={
 		**responses.id_no_encontrado,
 	},
@@ -61,7 +61,7 @@ def get_asignatura_por_codigo(
 	path="/",
 	response_model=list[Asignatura],
 	status_code=status.HTTP_201_CREATED,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.error_integridad_bbdd,
@@ -80,7 +80,7 @@ def crear_asignaturas(
 	path="/{codigo_asignatura}",
 	response_model=Asignatura,
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,
@@ -101,7 +101,7 @@ def actualizar_asignatura_por_codigo(
 @router.delete(
 	path="/",
 	status_code=status.HTTP_204_NO_CONTENT,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,
@@ -121,7 +121,7 @@ def borrar_asignatuas(
 @router.delete(
 	path="/{codigo_asignatura}",
 	status_code=status.HTTP_204_NO_CONTENT,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,

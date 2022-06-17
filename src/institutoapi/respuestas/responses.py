@@ -23,11 +23,10 @@ sin_registros = {
 	204: {"description": "La consulta no devolvió registros"},
 }
 
-# TODO: mejorar descripción
 error_integridad_bbdd = {
-	419: {"model": MensajeError, "description": "Clave duplicada o FK no registrada"},
+	409: {"model": MensajeError, "description": "Error de integridad en la BBDD"},
 }
 
 horario_invalido = {
-	419: {"model": MensajeError, "description": "El horario especificado no es compatible"},
+	409: {"model": MensajeError, "description": "El horario indicado  no es compatible con el horario actual"},
 }

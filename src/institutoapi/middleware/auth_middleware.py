@@ -1,5 +1,5 @@
 from fastapi import Depends
-from fastapi.security import OAuth2
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlmodel import Session
 
 from institutoapi.bbdd import get_sesion
@@ -9,22 +9,29 @@ from institutoapi.excepciones.auth import PermisosInsuficientesError, UsuarioNoL
 from institutoapi.servicios import servicio_jwt
 
 
-oauth2_scheme = OAuth2()
+auth_scheme = HTTPBearer(auto_error=False)
 
 
-async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme), sesion: Session = Depends(get_sesion)) -> Profesor:
+async def validar_profesor_logeado(
+	auth_credentials: HTTPAuthorizationCredentials = Depends(auth_scheme),
+	sesion: Session = Depends(get_sesion)
+) -> Profesor:
 	"""
-	La dependencia de oauth2_scheme comprueba que en HEADER de la petición HTTP se encuentre
-	un token en la clave Authorization. De ser así lo asigna al parámetro jwt_token.
+	La dependencia de auth_scheme comprueba que en HEADER de la petición HTTP se encuentre
+	un token en la clave Authorization. De ser así lo asigna al parámetro auth_credentials.
 
 	Valida que el token JWT sea válido. Para que un token JWT sea válido, se debe de poder decodificar con
 	la misma clave secreta y algoritmo. Una vez decodificado, revisa que no esté caducado.
 
-	:param jwt_token: el token JWT que se va a validar
+	:param auth_credentials: un objeto con la información del Authorization header
 	:param sesion: la sesión con la que se va a hacer la consulta a la BBDD
 	:return: los datos del profesor que ha iniciado sesión
 	"""
-	payload = servicio_jwt.decodificar_jwt_token(jwt_token)
+	if auth_credentials is None or auth_credentials.scheme.lower() != "bearer":
+		raise UsuarioNoLogeado
+
+	token_jwt = auth_credentials.credentials
+	payload   = servicio_jwt.decodificar_jwt_token(token_jwt)
 
 	codigo_profesor = payload.get("sub", None)
 	if codigo_profesor is None:

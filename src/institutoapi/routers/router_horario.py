@@ -4,7 +4,7 @@ from sqlmodel import Session
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_horario
 from institutoapi.excepciones.genericas import CodigoNoEncontradoError
-from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
+from institutoapi.middleware import auth_middleware as auth
 from institutoapi.modelos import HorarioRequest, HorarioResponse
 from institutoapi.respuestas import responses
 from institutoapi.servicios import servicio_horario
@@ -25,7 +25,7 @@ router = APIRouter(
 	path="/",
 	response_model=list[HorarioResponse],
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)],
+	dependencies=[Depends(auth.validar_profesor_logeado)],
 	responses={
 		**responses.sin_registros
 	}
@@ -43,7 +43,7 @@ def get_todos_los_horarios(
 	path="/",
 	response_model=list[HorarioResponse],
 	status_code=status.HTTP_201_CREATED,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.horario_invalido,
@@ -62,7 +62,7 @@ def crear_horarios(
 	path="/{id_horario}",
 	response_model=HorarioResponse,
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,
@@ -83,7 +83,7 @@ def actualizar_horario_por_id(
 @router.delete(
 	path="/",
 	status_code=status.HTTP_204_NO_CONTENT,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,
@@ -103,7 +103,7 @@ def borrar_horarios(
 @router.delete(
 	path="/{id_horario}",
 	status_code=status.HTTP_204_NO_CONTENT,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,

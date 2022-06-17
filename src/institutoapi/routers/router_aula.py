@@ -4,7 +4,7 @@ from sqlmodel import Session
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_aula
 from institutoapi.excepciones.genericas import CodigoNoEncontradoError
-from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
+from institutoapi.middleware import auth_middleware as auth
 from institutoapi.modelos import Aula
 from institutoapi.respuestas import responses
 from institutoapi.utils import APIRouter
@@ -24,7 +24,7 @@ router = APIRouter(
 	path="/",
 	response_model=list[Aula],
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)],
+	dependencies=[Depends(auth.validar_profesor_logeado)],
 	responses={
 		**responses.sin_registros,
 	},
@@ -42,7 +42,7 @@ def get_todas_las_aulas(
 	path="/{codigo_aula}",
 	response_model=Aula,
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)],
+	dependencies=[Depends(auth.validar_profesor_logeado)],
 	responses={
 		**responses.id_no_encontrado,
 	},
@@ -61,7 +61,7 @@ def get_aula_por_codigo(
 	path="/",
 	response_model=list[Aula],
 	status_code=status.HTTP_201_CREATED,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.error_integridad_bbdd,
@@ -80,7 +80,7 @@ def crear_aulas(
 	path="/{codigo_aula}",
 	response_model=Aula,
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,
@@ -101,7 +101,7 @@ def actualizar_aula_por_codigo(
 @router.delete(
 	path="/",
 	status_code=status.HTTP_204_NO_CONTENT,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,
@@ -121,7 +121,7 @@ def borrar_aulas(
 @router.delete(
 	path="/{codigo_aula}",
 	status_code=status.HTTP_204_NO_CONTENT,
-	dependencies=[Depends(validar_profesor_es_admin)],
+	dependencies=[Depends(auth.validar_profesor_es_admin)],
 	responses={
 		**responses.permisos_insuficientes,
 		**responses.id_no_encontrado,

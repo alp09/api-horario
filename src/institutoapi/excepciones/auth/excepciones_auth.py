@@ -10,9 +10,9 @@ class UsuarioNoRegistradoError(HTTPException):
 
 class UsuarioNoLogeado(HTTPException):
 
-	def __init__(self):
+	def __init__(self, mensaje: str = None):
 		self.status_code = status.HTTP_401_UNAUTHORIZED
-		self.detail  = "Es necesario iniciar sesión para acceder al sitio"
+		self.detail  = mensaje or "Es necesario iniciar sesión para acceder al sitio"
 		self.headers = {"WWW-Authenticate": "Bearer"}
 
 

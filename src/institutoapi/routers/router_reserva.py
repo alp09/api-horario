@@ -5,7 +5,7 @@ from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_reserva
 from institutoapi.excepciones.auth import PermisosInsuficientesError
 from institutoapi.excepciones.genericas import CodigoNoEncontradoError
-from institutoapi.middleware.auth import validar_profesor_logeado
+from institutoapi.middleware import auth_middleware as auth
 from institutoapi.modelos import ReservaRequest, ReservaResponse, Profesor
 from institutoapi.respuestas import responses
 from institutoapi.servicios import servicio_reserva
@@ -26,7 +26,7 @@ router = APIRouter(
 	path="/",
 	response_model=list[ReservaResponse],
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)],
+	dependencies=[Depends(auth.validar_profesor_logeado)],
 	responses={
 		**responses.sin_registros,
 	},
@@ -44,7 +44,7 @@ def get_todas_las_reservas(
 	path="/{id_reserva}",
 	response_model=ReservaResponse,
 	status_code=status.HTTP_200_OK,
-	dependencies=[Depends(validar_profesor_logeado)],
+	dependencies=[Depends(auth.validar_profesor_logeado)],
 	responses={
 		**responses.id_no_encontrado,
 	},
@@ -70,12 +70,12 @@ def get_reserva_por_id(
 )
 def crear_reservas(
 	reservas_nuevas: list[ReservaRequest],
-	profesor_logeado: Profesor = Depends(validar_profesor_logeado),
+	profesor_logeado: Profesor = Depends(auth.validar_profesor_logeado),
 	sesion_bbdd: Session = Depends(get_sesion)
 ):
 	# Si el profesor que crea las reservas no es admin, se comprueba que reservas_nuevas sean para el profesor logeado
 	# Dicho de otra forma, no se pueden hacer reservas para otro profesor si no eres administrador
-	if not validar_profesor_tiene_permiso(profesor_logeado, reservas_nuevas):
+	if not auth.validar_profesor_tiene_permiso(profesor_logeado, reservas_nuevas):
 		raise PermisosInsuficientesError
 
 	# Si no hay errores, crea las reservas
@@ -96,7 +96,7 @@ def crear_reservas(
 def actualizar_reserva_por_id(
 	id_reserva: int,
 	reserva_editada: ReservaRequest,
-	profesor_logeado: Profesor = Depends(validar_profesor_logeado),
+	profesor_logeado: Profesor = Depends(auth.validar_profesor_logeado),
 	sesion_bbdd: Session = Depends(get_sesion)
 ):
 	# Recoge la reserva que se quiere actualizar
@@ -107,7 +107,7 @@ def actualizar_reserva_por_id(
 		raise CodigoNoEncontradoError(id_reserva)
 
 	# Comprueba que el profesor que intenta modificar la reserva sea administrador o el profesor que hizo la reserva
-	if not validar_profesor_tiene_permiso(profesor_logeado, [reserva_encontrada]):
+	if not auth.validar_profesor_tiene_permiso(profesor_logeado, [reserva_encontrada]):
 		raise PermisosInsuficientesError
 
 	# Si tiene permisos para actualizar la reserva, continua con la operación
@@ -125,7 +125,7 @@ def actualizar_reserva_por_id(
 )
 def borrar_reservas(
 	id_reservas: list[int],
-	profesor_logeado: Profesor = Depends(validar_profesor_logeado),
+	profesor_logeado: Profesor = Depends(auth.validar_profesor_logeado),
 	sesion_bbdd: Session = Depends(get_sesion)
 ):
 	# Busca las reservas que se quieren eliminar
@@ -136,7 +136,7 @@ def borrar_reservas(
 		raise CodigoNoEncontradoError(id_reservas)
 
 	# Comprueba que el profesor que intenta borrar la reservas sea administrador o el profesor que hizo la reserva
-	if not validar_profesor_tiene_permiso(profesor_logeado, reservas_encontradas):
+	if not auth.validar_profesor_tiene_permiso(profesor_logeado, reservas_encontradas):
 		raise PermisosInsuficientesError
 
 	# Si el profesor puede eliminar las reservas que ha indicado, ejecuta el proceso
@@ -154,7 +154,7 @@ def borrar_reservas(
 )
 def borrar_reserva_por_id(
 	id_reserva: int,
-	profesor_logeado: Profesor = Depends(validar_profesor_logeado),
+	profesor_logeado: Profesor = Depends(auth.validar_profesor_logeado),
 	sesion_bbdd: Session = Depends(get_sesion)
 ):
 	# Recoge la reserva que se quiere borrar
@@ -165,7 +165,7 @@ def borrar_reserva_por_id(
 		raise CodigoNoEncontradoError(id_reserva)
 
 	# Comprueba que el profesor que intenta borrar la reserva sea administrador o el profesor que hizo la reserva
-	if not validar_profesor_tiene_permiso(profesor_logeado, [reserva_encontrada]):
+	if not auth.validar_profesor_tiene_permiso(profesor_logeado, [reserva_encontrada]):
 		raise PermisosInsuficientesError
 
 	# Si tiene permisos para borrar la reserva, continua con la operación

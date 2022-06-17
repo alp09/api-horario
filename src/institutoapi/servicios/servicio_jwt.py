@@ -41,8 +41,8 @@ def decodificar_jwt_token(jwt_token: str) -> dict:
 		raise SesionCaducadaError
 
 	# Si es una excepción distinta a las anteriores, devuelvo un error genérico
-	except jwt.PyJWTError:
-		raise UsuarioNoLogeado
+	except jwt.PyJWTError as excepcion:
+		raise UsuarioNoLogeado(excepcion.args[0])
 
 	# Si no hubo errores, devuelvo el payload
 	else:

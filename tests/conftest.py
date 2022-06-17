@@ -6,7 +6,7 @@ from sqlmodel.pool import StaticPool
 from institutoapi.main import app
 from institutoapi.bbdd.bbdd import get_sesion
 from institutoapi.modelos import Profesor
-from institutoapi.middleware.auth import validar_profesor_logeado
+from institutoapi.middleware import auth_middleware as auth
 
 
 @pytest.fixture(name="db_engine", scope="session")
@@ -41,9 +41,9 @@ def cliente_autorizado(cliente_no_autorizado, profesor_factory, request):
 		return profesor_logeado
 
 	profesor_logeado = profesor_factory(es_admin=request.param)
-	app.dependency_overrides[validar_profesor_logeado] = mock_validar_profesor_logeado
+	app.dependency_overrides[auth.validar_profesor_logeado] = mock_validar_profesor_logeado
 	yield cliente_no_autorizado, profesor_logeado
-	app.dependency_overrides.pop(validar_profesor_logeado)
+	app.dependency_overrides.pop(auth.validar_profesor_logeado)
 
 
 @pytest.fixture(name="profesor_factory")
