@@ -10,7 +10,35 @@ from institutoapi.routers import *
 
 
 # App FastAPI
-app = FastAPI()
+app = FastAPI(
+	title="API reservas",
+	description="""
+API para la gestión de horarios y reservas de aulas del instituto.
+	
+## Features
+
+- ### Gestión de horario y reservas
+
+	La API proveé rutas para manipular los datos de asignaturas, aulas, grupos, profesores, horarios y reservas. Todas las rutas están protegidas bajo autorización por tokens.
+
+- ### Autenticación mediante Google API
+
+    La API es totalmente segura, ya que en ningún momento tiene acceso a información sensible. Esto se debe a que la autenticación se realiza en los servidores seguros de Google. La única información a la que se tiene acceso es el e-mail, con el que se verifica la identidad del profesor que intenta usar la API. 
+
+- ### Autorización con tokens JWT
+
+    Una vez el profesor se identifica, se le concede un token JWT firmado por el servidor con el que podrá demostrar su identidad en las futuras peticiones que realice.
+    
+    Este token también se usa para validar los roles del profesor cuando intenta acceder a rutas restringidas. 
+
+	
+	""",
+	version="1.0.0",
+	contact={
+		"name": "Abel López Parrado",
+		"email": "abellp13@gmail.com",
+	},
+)
 
 # Permite probar OAuth2 sin necesidad de tener HTTPS
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
