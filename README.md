@@ -34,16 +34,21 @@ También debe permitir a unos profesores administradores insertar los datos de a
 * **[PyJWT](https://github.com/jpadilla/pyjwt)** : una librería de Python para codificar y decodificar tokens JWT.
 
 
-
-
 ## Features
+
+- ### Uso sencillo
+
+    Una de las características de FastAPI es que genera documentación de cada una de las rutas definidas de forma automática, facilitando así el uso de la API a los clientes de esta. 
+
+    &nbsp;
+	![Imagen de la documentación de la API](assets/imagen-docs.png)
 
 - ### Autenticación mediante Google API
 
     La API es totalmente segura, ya que en ningún momento tiene acceso a información sensible. Esto se debe a que la autenticación se realiza en los servidores seguros de Google. La única información a la que se tiene acceso es el e-mail, con el que se verifica la identidad del profesor que intenta usar la API. 
 
     &nbsp;
-    ![Imagen de la pantalla de login de Google](https://user-images.githubusercontent.com/65811900/173885934-423fab9c-8dbc-44e9-bc06-b0247a804503.png)
+    ![Imagen de la pantalla de login de Google](assets/imagen-google-login.png)
 
 - ### Autorización con tokens JWT
 
@@ -56,10 +61,6 @@ También debe permitir a unos profesores administradores insertar los datos de a
     ```
 
     [![](http://jwt.io/img/badge.svg)](https://jwt.io/)
-
-- ### Uso sencillo
-
-    Una de las características de FastAPI es que genera documentación de cada una de las rutas definidas de forma automática, facilitando así el uso de la API a los clientes de esta. 
 
 
 ## Requisitos
