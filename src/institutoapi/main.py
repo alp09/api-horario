@@ -13,6 +13,7 @@ from institutoapi.routers import *
 app = FastAPI(
 	title="API reservas",
 	description="""
+	
 API para la gestión de horarios y reservas de aulas del instituto.
 	
 ## Features
@@ -30,7 +31,6 @@ API para la gestión de horarios y reservas de aulas del instituto.
     Una vez el profesor se identifica, se le concede un token JWT firmado por el servidor con el que podrá demostrar su identidad en las futuras peticiones que realice.
     
     Este token también se usa para validar los roles del profesor cuando intenta acceder a rutas restringidas. 
-
 	
 	""",
 	version="1.0.0",
