@@ -3,10 +3,11 @@ from sqlmodel import Session
 
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_reserva
-from institutoapi.modelos import ReservaRequest, ReservaResponse, Profesor
 from institutoapi.excepciones.auth import PermisosInsuficientesError
 from institutoapi.excepciones.genericas import CodigoNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado
+from institutoapi.modelos import ReservaRequest, ReservaResponse, Profesor
+from institutoapi.respuestas import responses
 from institutoapi.servicios import servicio_reserva
 from institutoapi.utils import APIRouter
 
@@ -15,6 +16,9 @@ from institutoapi.utils import APIRouter
 router = APIRouter(
 	prefix="/reservas",
 	tags=["reservas"],
+	responses={
+		**responses.no_autorizado,
+	},
 )
 
 
@@ -23,6 +27,9 @@ router = APIRouter(
 	response_model=list[ReservaResponse],
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)],
+	responses={
+		**responses.sin_registros,
+	},
 )
 def get_todas_las_reservas(
 	sesion_bbdd: Session = Depends(get_sesion)
@@ -38,6 +45,9 @@ def get_todas_las_reservas(
 	response_model=ReservaResponse,
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)],
+	responses={
+		**responses.id_no_encontrado,
+	},
 )
 def get_reserva_por_id(
 	id_reserva: int,
@@ -53,6 +63,10 @@ def get_reserva_por_id(
 	path="/",
 	response_model=list[ReservaResponse],
 	status_code=status.HTTP_201_CREATED,
+	responses={
+		**responses.permisos_insuficientes,
+		**responses.horario_invalido,
+	},
 )
 def crear_reservas(
 	reservas_nuevas: list[ReservaRequest],
@@ -73,6 +87,11 @@ def crear_reservas(
 	path="/{id_reserva}",
 	response_model=list[ReservaResponse],
 	status_code=status.HTTP_200_OK,
+	responses={
+		**responses.permisos_insuficientes,
+		**responses.id_no_encontrado,
+		**responses.horario_invalido,
+	},
 )
 def actualizar_reserva_por_id(
 	id_reserva: int,
@@ -99,6 +118,10 @@ def actualizar_reserva_por_id(
 @router.delete(
 	path="/",
 	status_code=status.HTTP_204_NO_CONTENT,
+	responses={
+		**responses.permisos_insuficientes,
+		**responses.id_no_encontrado,
+	},
 )
 def borrar_reservas(
 	id_reservas: list[int],
@@ -123,7 +146,11 @@ def borrar_reservas(
 
 @router.delete(
 	path="/{id_reserva}",
-	status_code=status.HTTP_204_NO_CONTENT
+	status_code=status.HTTP_204_NO_CONTENT,
+	responses={
+		**responses.permisos_insuficientes,
+		**responses.id_no_encontrado,
+	},
 )
 def borrar_reserva_por_id(
 	id_reserva: int,

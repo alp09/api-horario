@@ -1,8 +1,8 @@
-from sqlalchemy.exc import IntegrityError, InternalError
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select, insert, update, delete
 
 from institutoapi.modelos import Reserva
-from institutoapi.excepciones.bbdd import IntegridadDatosError, DatosInvalidosError
+from institutoapi.excepciones.bbdd import IntegridadDatosError
 
 
 def seleccionar_todas(sesion: Session) -> list[Reserva]:
@@ -82,8 +82,6 @@ def insertar(sesion: Session, datos_reservas: list[dict]) -> list[Reserva]:
 
 	except IntegrityError as excepcion:
 		raise IntegridadDatosError(excepcion.orig.pgerror)
-	except InternalError as excepcion:
-		raise DatosInvalidosError(excepcion.orig.pgerror)
 
 
 def actualizar_por_id(sesion: Session, id_reserva: int, datos_reserva: dict) -> Reserva | None:
@@ -115,8 +113,6 @@ def actualizar_por_id(sesion: Session, id_reserva: int, datos_reserva: dict) -> 
 
 	except IntegrityError as excepcion:
 		raise IntegridadDatosError(excepcion.orig.pgerror)
-	except InternalError as excepcion:
-		raise DatosInvalidosError(excepcion.orig.pgerror)
 
 
 def borrar(sesion: Session, id_reservas: list[int]) -> list[int]:

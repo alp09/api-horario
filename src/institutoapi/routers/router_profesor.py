@@ -3,10 +3,10 @@ from sqlmodel import Session
 
 from institutoapi.bbdd import get_sesion
 from institutoapi.bbdd.dao import dao_profesor
-from institutoapi.modelos import Profesor
 from institutoapi.excepciones.genericas import CodigoNoEncontradoError
-from institutoapi.excepciones.profesor import EmailNoEncontradoError
 from institutoapi.middleware.auth import validar_profesor_logeado, validar_profesor_es_admin
+from institutoapi.modelos import Profesor
+from institutoapi.respuestas import responses
 from institutoapi.utils import APIRouter
 
 
@@ -14,6 +14,9 @@ from institutoapi.utils import APIRouter
 router = APIRouter(
 	prefix="/profesores",
 	tags=["profesores"],
+	responses={
+		**responses.no_autorizado,
+	},
 )
 
 
@@ -22,6 +25,9 @@ router = APIRouter(
 	response_model=list[Profesor],
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)],
+	responses={
+		**responses.sin_registros,
+	},
 )
 def get_todos_los_profesores(
 	sesion_bbdd: Session = Depends(get_sesion)
@@ -37,6 +43,9 @@ def get_todos_los_profesores(
 	response_model=Profesor,
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)],
+	responses={
+		**responses.id_no_encontrado
+	}
 )
 def get_profesor_por_codigo(
 	codigo_profesor: str,
@@ -53,6 +62,9 @@ def get_profesor_por_codigo(
 	response_model=Profesor,
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_logeado)],
+	responses={
+		**responses.id_no_encontrado,
+	},
 )
 def get_profesor_por_email(
 	email_profesor: str,
@@ -60,7 +72,7 @@ def get_profesor_por_email(
 ):
 	profesor_seleccionado = dao_profesor.seleccionar_por_email(sesion_bbdd, email_profesor)
 	if not profesor_seleccionado:
-		raise EmailNoEncontradoError(email_profesor)
+		raise CodigoNoEncontradoError(email_profesor)
 	return profesor_seleccionado
 
 
@@ -69,6 +81,10 @@ def get_profesor_por_email(
 	response_model=list[Profesor],
 	status_code=status.HTTP_201_CREATED,
 	dependencies=[Depends(validar_profesor_es_admin)],
+	responses={
+		**responses.permisos_insuficientes,
+		**responses.error_integridad_bbdd,
+	},
 )
 def crear_profesores(
 	profesores_nuevos: list[Profesor],
@@ -84,6 +100,11 @@ def crear_profesores(
 	response_model=Profesor,
 	status_code=status.HTTP_200_OK,
 	dependencies=[Depends(validar_profesor_es_admin)],
+	responses={
+		**responses.permisos_insuficientes,
+		**responses.id_no_encontrado,
+		**responses.error_integridad_bbdd,
+	},
 )
 def actualizar_profesor_por_codigo(
 	codigo_profesor: str,
@@ -100,6 +121,11 @@ def actualizar_profesor_por_codigo(
 	path="/",
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(validar_profesor_es_admin)],
+	responses={
+		**responses.permisos_insuficientes,
+		**responses.id_no_encontrado,
+		**responses.error_integridad_bbdd,
+	},
 )
 def borrar_profesores(
 	codigos_profesores: list[str],
@@ -115,6 +141,11 @@ def borrar_profesores(
 	path="/{codigo_profesor}",
 	status_code=status.HTTP_204_NO_CONTENT,
 	dependencies=[Depends(validar_profesor_es_admin)],
+	responses={
+		**responses.permisos_insuficientes,
+		**responses.id_no_encontrado,
+		**responses.error_integridad_bbdd,
+	},
 )
 def borrar_profesor_por_codigo(
 	codigo_profesor: str,

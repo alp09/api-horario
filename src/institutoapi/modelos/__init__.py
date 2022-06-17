@@ -1,3 +1,4 @@
+from .modelo_error import MensajeError
 from .modelo_auth import Token
 
 # Tablas de la BBDD

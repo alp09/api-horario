@@ -70,7 +70,7 @@ Es necesario tener Python 3.10 instalado.
 
 1. Ejecuta el siguiente comando desde el terminal:
 	
-    ```shell
+    ```console
     $ git clone https://github.com/alp09/api-horario.git
     ```
 
@@ -79,7 +79,7 @@ Es necesario tener Python 3.10 instalado.
 
 2. A continuación instala las dependencias del proyecto con el comando:
 
-    ```shell
+    ```console
     path/proyecto$ pip install -r requirements.txt
     ```
 
@@ -88,7 +88,7 @@ Es necesario tener Python 3.10 instalado.
 
 * En caso de que vayas a ejecutar los test necesitarás las dependencias de desarrollo. Para instalarlas usa el comando:
 
-    ```shell
+    ```console
     path/proyecto$ pip install -r requirements-dev.txt
     ```
 

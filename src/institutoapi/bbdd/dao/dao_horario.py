@@ -1,8 +1,8 @@
-from sqlalchemy.exc import IntegrityError, InternalError
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select, insert, update, delete
 
 from institutoapi.modelos import Horario
-from institutoapi.excepciones.bbdd import IntegridadDatosError, DatosInvalidosError
+from institutoapi.excepciones.bbdd import IntegridadDatosError
 
 
 def seleccionar_todos(sesion: Session) -> list[Horario]:
@@ -48,8 +48,6 @@ def insertar(sesion: Session, datos_horarios: list[dict]) -> list[Horario]:
 
 	except IntegrityError as excepcion:
 		raise IntegridadDatosError(excepcion.orig.pgerror)
-	except InternalError as excepcion:
-		raise DatosInvalidosError(excepcion.orig.pgerror)
 
 
 def actualizar_por_codigo(sesion: Session, id_horario: int, datos_horario: dict) -> Horario | None:
@@ -81,8 +79,6 @@ def actualizar_por_codigo(sesion: Session, id_horario: int, datos_horario: dict)
 
 	except IntegrityError as excepcion:
 		raise IntegridadDatosError(excepcion.orig.pgerror)
-	except InternalError as excepcion:
-		raise DatosInvalidosError(excepcion.orig.pgerror)
 
 
 def borrar(sesion: Session, id_horarios: list[int]) -> list[int]:

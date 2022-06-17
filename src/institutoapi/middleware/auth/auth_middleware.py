@@ -1,5 +1,5 @@
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2
 from sqlmodel import Session
 
 from institutoapi.bbdd import get_sesion
@@ -9,7 +9,7 @@ from institutoapi.excepciones.auth import PermisosInsuficientesError, UsuarioNoL
 from institutoapi.servicios import servicio_jwt
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2()
 
 
 async def validar_profesor_logeado(jwt_token: str = Depends(oauth2_scheme), sesion: Session = Depends(get_sesion)) -> Profesor:

@@ -104,6 +104,10 @@ def borrar(sesion: Session, codigos_grupos: list[str]) -> list[str]:
 		.returning(Grupo.codigo)
 	)
 
-	grupo_eliminado = sesion.exec(sql).scalars().all()
-	sesion.commit()
-	return grupo_eliminado
+	try:
+		grupo_eliminado = sesion.exec(sql).scalars().all()
+		sesion.commit()
+		return grupo_eliminado
+
+	except IntegrityError as excepcion:
+		raise IntegridadDatosError(excepcion.orig.pgerror)

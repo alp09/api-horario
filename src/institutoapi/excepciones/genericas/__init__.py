@@ -1,3 +1,3 @@
 from .excepciones_genericas import (
-	CodigoNoEncontradoError
+	CodigoNoEncontradoError,
 )

@@ -121,6 +121,10 @@ def borrar(sesion: Session, codigos_profesores: list[str]) -> list[str]:
 		.returning(Profesor.codigo)
 	)
 
-	profesores_eliminados = sesion.exec(sql).scalars().all()
-	sesion.commit()
-	return profesores_eliminados
+	try:
+		profesores_eliminados = sesion.exec(sql).scalars().all()
+		sesion.commit()
+		return profesores_eliminados
+
+	except IntegrityError as excepcion:
+		raise IntegridadDatosError(excepcion.orig.pgerror)
