@@ -72,16 +72,16 @@ Es necesario tener Python 3.10 instalado.
 1. Ejecuta el siguiente comando desde el terminal:
 	
     ```shell
-    $ git clone https://github.com/alp09/api-horario.git
+    git clone https://github.com/alp09/api-horario.git
     ```
 
 * También puedes descargar el código fuente desde este [enlace](https://github.com/alp09/api-horario/archive/refs/heads/main.zip).
 
 
-2. A continuación instala las dependencias del proyecto con el comando:
+2. A continuación instala el proyecto y sus dependencias con el comando:
 
     ```shell
-    path/proyecto$ pip install -r requirements.txt
+    pip install -e .
     ```
 
 * También tendrás que instalar el driver de la base de datos que decidas usar. La lista completa de drivers admitidos la puedes encontrar en la [documentación de SQLAlchemy](https://docs.sqlalchemy.org/en/14/core/engines.html#database-urls).
@@ -90,7 +90,7 @@ Es necesario tener Python 3.10 instalado.
 * En caso de que vayas a ejecutar los test necesitarás las dependencias de desarrollo. Para instalarlas usa el comando:
 
     ```shell
-    path/proyecto$ pip install -r requirements-dev.txt
+    pip install -r requirements-dev.txt
     ```
 
 ## Configuración
