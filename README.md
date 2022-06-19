@@ -97,7 +97,7 @@ Es necesario tener Python 3.10 instalado.
 
 Los archivos de configuración del proyecto se encuentran bajo el paquete `config`. Aquí encontrarás dos archivos:
 
-* `cliente_secret.json` es un archivo proporcionado por Google al registrar un proyecto como cliente de las API de Google. Puedes encontrar más información en el [tutorial de Google](https://developers.google.com/identity/sign-in/web/sign-in). Si necesitas una guía paso a paso la puedes encontrar en los [docs del repositorio](https://docs.google.com/viewer?url=https://github.com/alp09/api-horario/raw/main/docs/Configuraci%C3%B3n%20del%20cliente%20de%20Google.pdf)
+* `cliente_secret.json` es un archivo proporcionado por Google al registrar un proyecto como cliente de las API de Google. Puedes encontrar más información en el [tutorial de Google](https://developers.google.com/identity/sign-in/web/sign-in). Si necesitas una guía paso a paso la puedes encontrar en los [docs del repositorio](https://docs.google.com/viewer?url=https://github.com/alp09/api-horario/raw/main/docs/Configuraci%C3%B3n%20del%20cliente%20de%20Google.pdf).
 
 
 * `settings.py` es el archivo de configuración principal. Aquí podrás modificar la dirección de la API, indicar la URL de tu base de datos, etc. Tienes una guía detallada en los [docs del repositorio](https://docs.google.com/viewer?url=https://github.com/alp09/api-horario/raw/main/docs/Configuraci%C3%B3n%20de%20la%20API.pdf).
